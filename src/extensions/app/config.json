@@ -1,4 +1,7 @@
 {
 	"name": "App",
-	"classpath": "extensions.app.App"
+	"classpath": "extensions.app.App",
+	"dependencies": [
+		"extensions.test.Test"
+	]
 }

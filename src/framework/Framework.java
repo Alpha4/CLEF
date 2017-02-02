@@ -9,8 +9,10 @@ import java.util.Map;
 import com.google.gson.*;
 
 public class Framework {
+	
+	private static Map<Class<?>,ExtensionContainer> extensions;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		/* 1- Load config */
 		Config base = Framework.loadConfig();
@@ -19,10 +21,10 @@ public class Framework {
 		Config app = Framework.loadConfig(base.getBase());
 		
 		/* 3- Load extensions */
-		Map<String,IExtension> extensions = Framework.loadExtensions(app);
+		Framework.extensions = Framework.loadExtensions(app);
 		
 		/* 4- Execute app extension */
-		extensions.get("extensions.app.App").run();
+		((IAppExtension) Framework.get(Class.forName(app.getClasspath()))).run();
 		
 	}
 	
@@ -52,29 +54,25 @@ public class Framework {
 		return config;
 	}
 	
-	public static Map<String, IExtension> loadExtensions(Config app) {
+	public static Map<Class<?>, ExtensionContainer> loadExtensions(Config app) {
 		
-		Map<String, IExtension> extensions = new HashMap<String, IExtension>();
+		Map<Class<?>, ExtensionContainer> extensions = new HashMap<Class<?>, ExtensionContainer>();
 		
 		// Instantiate app
 		
 		try {
-			Class<?> cl = Class.forName(app.getClasspath());
-			IExtension ex = (IExtension) cl.newInstance();
-			extensions.put(app.getClasspath(),ex);
+			extensions.put(Class.forName(app.getClasspath()), new ExtensionContainer(app));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		// Instantiate app's dependencies
 		
-		List<String> classpaths = Framework.resolveDependencies(app);
+		List<Config> configs = Framework.resolveDependencies(app);
 		
-		for(String classpath : classpaths) {
+		for(Config config : configs) {
 			try {
-				Class<?> cl = Class.forName(classpath);
-				IExtension ex = (IExtension) cl.newInstance();
-				extensions.put(classpath, ex);
+				extensions.put(Class.forName(config.getClasspath()), new ExtensionContainer(config));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -83,17 +81,24 @@ public class Framework {
 		return extensions;
 	}
 	
-	public static List<String> resolveDependencies(Config config) {
-		List<String> dependencies = new ArrayList<String>();
+	public static List<Config> resolveDependencies(Config config) {
+		List<Config> dependencies = new ArrayList<Config>();
 		
-		dependencies.addAll(config.getDependencies());
+		dependencies.add(config);
 		
-		for(String classpath : dependencies) {
+		for(String classpath : config.getDependencies()) {
 			Config conf = Framework.loadConfig(classpath);
 			dependencies.addAll(Framework.resolveDependencies(conf));
 		}
 		
 		return dependencies;
+	}
+	
+	public static IExtension get(Class<?> cl) {
+		ExtensionContainer container = Framework.extensions.get(cl);
+		if (container == null)
+			System.out.println("Extension not found: "+cl);
+		return container.getExtension();
 	}
 
 }

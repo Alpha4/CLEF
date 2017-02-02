@@ -1,13 +1,19 @@
 package extensions.app;
 
-import framework.IExtension;
+import framework.Framework;
+import framework.IAppExtension;
 
-public class App implements IExtension {
+import extensions.test.Test;
+
+public class App implements IAppExtension {
 
 	public void run() {
 		
-		System.out.println("Truc");
+		String str = "salut!";
 		
+		Test test = (Test) Framework.get(Test.class);
+		
+		test.echo(str);
 	}
 	
 }
