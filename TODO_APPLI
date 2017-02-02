@@ -1,0 +1,21 @@
+TODO_APPLI
+//modules du projet, affectation, état d'avancement et reste à faire
+
+modules du projet
+Un framework
+Une IHM
+Une extension principale de communication réseau
+
+affectation
+
+
+état d'avancement
+framework : en cours
+réseau : en cours (standalone)
+ihm : en cours (standalone)
+
+
+reste à faire
+Mise en extension du réseau et de l'ihm
+Création d'autres extensions
+Tests et debug
