@@ -1,0 +1,5 @@
+{
+	"name": "CLEF",
+	"description": "Truc",
+	"base": "extensions.app.App"
+}
