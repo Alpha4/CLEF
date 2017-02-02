@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.gson.*;
 
 public class Framework {
 	
-	private static Map<Class<?>,ExtensionContainer> extensions;
+	// TODO: change to List of extension containers
+	private static Map<Class<?>,Map<Class<?>,ExtensionContainer>> extensions;
 
 	public static void main(String[] args) throws Exception {
 
@@ -24,7 +26,8 @@ public class Framework {
 		Framework.extensions = Framework.loadExtensions(app);
 		
 		/* 4- Execute app extension */
-		((IAppExtension) Framework.get(Class.forName(app.getClasspath()))).run();
+		List<Config> configs = Framework.get(Class.forName("framework.plugin.I"+app.getType()));
+		((IAutorunExtension) Framework.get(Class.forName("framework.plugin.I"+app.getType()), configs.get(0))).run();
 		
 	}
 	
@@ -54,29 +57,37 @@ public class Framework {
 		return config;
 	}
 	
-	public static Map<Class<?>, ExtensionContainer> loadExtensions(Config app) {
+	public static Map<Class<?>, Map<Class<?>, ExtensionContainer>> loadExtensions(Config app) {
 		
-		Map<Class<?>, ExtensionContainer> extensions = new HashMap<Class<?>, ExtensionContainer>();
+		Map<Class<?>, Map<Class<?>, ExtensionContainer>> extensions = new HashMap<Class<?>, Map<Class<?>, ExtensionContainer>>();
 		
-		// Instantiate app
+		// Load app
 		
 		try {
-			extensions.put(Class.forName(app.getClasspath()), new ExtensionContainer(app));
+			Class<?> plugin = Class.forName("framework.plugin.I"+app.getType());
+			extensions.put(plugin, new HashMap<Class<?>, ExtensionContainer>());
+			extensions.get(plugin).put(Class.forName(app.getClasspath()), new ExtensionContainer(app));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		// Instantiate app's dependencies
+		// Load app's dependencies
 		
 		List<Config> configs = Framework.resolveDependencies(app);
 		
 		for(Config config : configs) {
 			try {
-				extensions.put(Class.forName(config.getClasspath()), new ExtensionContainer(config));
+				Class<?> plugin = Class.forName("framework.plugin.I"+config.getType());
+				if (extensions.get(plugin) == null) {
+					extensions.put(plugin, new HashMap<Class<?>, ExtensionContainer>());
+				}
+				extensions.get(plugin).put(Class.forName(config.getClasspath()), new ExtensionContainer(config));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		
+		//System.out.println(extensions);
 		
 		return extensions;
 	}
@@ -94,11 +105,26 @@ public class Framework {
 		return dependencies;
 	}
 	
-	public static IExtension get(Class<?> cl) {
-		ExtensionContainer container = Framework.extensions.get(cl);
-		if (container == null)
-			System.out.println("Extension not found: "+cl);
-		return container.getExtension();
+	public static List<Config> get(Class<?> cl) {
+		List<Config> configs = new ArrayList<Config>();
+		
+		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
+			configs.add(container.getValue().getMeta());
+		}
+		
+		return configs;
+	}
+	
+	public static IExtension get(Class<?> cl, Config config) {
+		
+		
+		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
+			if (container.getValue().getMeta().getClasspath().equals(config.getClasspath())) {
+				return container.getValue().getExtension();
+			}
+		}
+		
+		return null;
 	}
 
 }

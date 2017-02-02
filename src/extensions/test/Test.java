@@ -1,10 +1,11 @@
 package extensions.test;
 
 import framework.IExtension;
+import framework.plugin.IAffichage;
 
-public class Test implements IExtension {
+public class Test implements IExtension, IAffichage{
 	
-	public void echo(String str) {
+	public void print(String str) {
 		System.out.println(str);
 	}
 

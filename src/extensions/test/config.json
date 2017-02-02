@@ -1,4 +1,5 @@
 {
 	"name": "Test",
-	"classpath": "extensions.test.Test"
+	"classpath": "extensions.test.Test",
+	"type": "Affichage"
 }

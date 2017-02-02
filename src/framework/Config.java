@@ -8,6 +8,7 @@ public class Config {
 	String name;
 	String description;
 	String base;
+	String type;
 	String classpath;
 	List<String> dependencies = new ArrayList<String>();
 	
@@ -45,6 +46,12 @@ public class Config {
 	}
 	public void setClasspath(String classpath) {
 		this.classpath = classpath;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 }
