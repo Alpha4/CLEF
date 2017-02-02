@@ -25,6 +25,7 @@ public class Framework {
 		/* 3- Load extensions */
 		Framework.extensions = Framework.loadExtensions(app);
 		
+		// TODO: Faire les autoruns
 		/* 4- Execute app extension */
 		List<Config> configs = Framework.get(Class.forName("framework.plugin.I"+app.getType()));
 		((IAutorunExtension) Framework.get(Class.forName("framework.plugin.I"+app.getType()), configs.get(0))).run();
