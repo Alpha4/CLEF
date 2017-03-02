@@ -31,7 +31,7 @@ public class Network implements INetwork {
 		return onlyInstance;
 	}
 
-	@Override
+	
 	public IMessage receive() throws IOException {
 		DatagramPacket in = new DatagramPacket(buffer, buffer.length);
 		socket.receive(in);
@@ -44,7 +44,7 @@ public class Network implements INetwork {
 		return m;
 	}
 
-	@Override
+	
 	public void send(IMessage m, InetAddress address) {
 		String message = m.getAuthor() + "/" + m.getPlainText();
 		DatagramPacket out = new DatagramPacket(message.getBytes(), message.length(), address, port);
