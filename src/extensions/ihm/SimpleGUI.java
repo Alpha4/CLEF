@@ -6,6 +6,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import extensions.network.Message;
+import framework.plugin.IMessage;
+
 public class SimpleGUI implements IGUI {
    // Connect status constants
    final static int DISCONNECTED = 0;
@@ -23,6 +26,8 @@ public class SimpleGUI implements IGUI {
    public static JRadioButton guestOption = null;
    public static JButton connectButton = null;
    public static JButton disconnectButton = null;
+   
+   public static SimpleGUI simplegui = new SimpleGUI();
 
    // Connection info
    public static String hostIP = "localhost";
@@ -71,6 +76,7 @@ public class SimpleGUI implements IGUI {
       buttonListener = new ActionAdapter() {
             public void actionPerformed(ActionEvent e) {
                // Request a connection initiation
+
                if (e.getActionCommand().equals("connect")) {
                   connectButton.setEnabled(false);
                   disconnectButton.setEnabled(true);
@@ -81,7 +87,10 @@ public class SimpleGUI implements IGUI {
                   guestOption.setEnabled(false);
                   chatLine.setEnabled(true);
                   statusBar.setText("Online");
+
                   mainFrame.repaint();
+
+                 
                }
                // Disconnect
                else {
@@ -143,7 +152,7 @@ public class SimpleGUI implements IGUI {
       mainPane.add(statusBar, BorderLayout.SOUTH);
       mainPane.add(optionsPane, BorderLayout.WEST);
       mainPane.add(chatPane, BorderLayout.CENTER);
-
+      
       // Set up the main frame
       mainFrame = new JFrame("Simple TCP Chat");
       mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -157,6 +166,38 @@ public class SimpleGUI implements IGUI {
    public static void main(String args[]) {
       initGUI();
    }
+
+
+public void receiveMessage(IMessage message) {
+	// TODO ON ESSAYE HEIN
+	
+	String newMessage = "Salut! \n";
+	String chat = chatLine.getText();
+	String newChat = chat + newMessage;
+	
+	ipField.setText(newChat);
+	ipField.setText("kek");
+	System.out.println("KAKAKAK");
+	
+}
+
+@Override
+public void receiveRoomList() {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void connectedToServResponse() {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void disconnectedFromServer() {
+	// TODO Auto-generated method stub
+	
+}
 }
 
 // Action adapter for easy event-listener coding
