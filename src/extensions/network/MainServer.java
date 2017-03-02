@@ -7,7 +7,11 @@ import framework.plugin.IMessage;
 import framework.plugin.INetwork;
 
 public class MainServer {
-
+	
+	/*
+	 * FOR TESTING PURPOSES ONLY
+	 */
+	
 	public static void main(String[] args) {
 		INetwork net = Network.getInstance();
 

@@ -33,7 +33,6 @@ public class Network implements INetwork {
 		return onlyInstance;
 	}
 
-	
 	public IMessage receive() throws IOException {
 		DatagramPacket in = new DatagramPacket(buffer, buffer.length);
 		receivingSocket.receive(in);
@@ -42,12 +41,12 @@ public class Network implements INetwork {
 		String[] strings = message.split("/");
 		m.setAuthor(strings[0]);
 		m.setPlainText(strings[1]);
+		m.setAddress(in.getAddress());
 		buffer = new byte[size];
-		
+
 		return m;
 	}
 
-	
 	public void send(IMessage m, InetAddress address) {
 		String message = m.getAuthor() + "/" + m.getPlainText();
 		DatagramPacket out = new DatagramPacket(message.getBytes(), message.getBytes().length, address, port);
