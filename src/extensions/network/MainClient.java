@@ -15,9 +15,15 @@ public class MainClient {
 		
 		Message m = new Message();
 		m.setAuthor("Auré");
-		m.setPlainText("super test");
+		m.setPlainText("super tealjbfiajfakpofjaioùhzfiugaiuhpst");
+		
+		Message m2 = new Message();
+		m2.setAuthor("Machin");
+		m2.setPlainText("super test");
+		
 		
 		net.send(m, InetAddress.getByName("localhost"));
+		net.send(m2, InetAddress.getByName("localhost"));
 		
 	}
 
