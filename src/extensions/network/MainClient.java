@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+import framework.plugin.INetwork;
+
 public class MainClient {
 
 	public static void main(String[] args) throws UnknownHostException {

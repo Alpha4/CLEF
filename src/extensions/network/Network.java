@@ -6,6 +6,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import framework.plugin.IMessage;
+import framework.plugin.INetwork;
+
 public class Network implements INetwork {
 
 	private static INetwork onlyInstance = new Network();

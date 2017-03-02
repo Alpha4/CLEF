@@ -3,6 +3,9 @@ package extensions.network;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import framework.plugin.IMessage;
+import framework.plugin.INetwork;
+
 public class MainServer {
 
 	public static void main(String[] args) {

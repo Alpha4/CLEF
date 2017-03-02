@@ -1,4 +1,4 @@
-package extensions.network;
+package framework.plugin;
 
 
 public interface IMessage {

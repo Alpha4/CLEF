@@ -1,5 +1,6 @@
 package extensions.network;
 
+import framework.plugin.IMessage;
 
 public class Message implements IMessage {
 	private String author;
