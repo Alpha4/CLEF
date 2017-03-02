@@ -1,3 +1,5 @@
+package extensions.network;
+
 
 public class Message implements IMessage {
 	private String author;

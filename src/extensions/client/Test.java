@@ -1,4 +1,4 @@
-package Client;
+package extensions.client;
 
 import javax.swing.JFrame;
 
