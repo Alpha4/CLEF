@@ -34,4 +34,8 @@ public class ExtensionContainer {
 		this.extension = extension;
 	}
 	
+	public String toString() {
+		return "[Container: "+this.meta+"]";
+	}
+	
 }

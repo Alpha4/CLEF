@@ -7,7 +7,6 @@ public class Config {
 
 	String name;
 	String description;
-	String base;
 	String type;
 	String classpath;
 	List<String> dependencies = new ArrayList<String>();
@@ -24,16 +23,10 @@ public class Config {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getBase() {
-		return base;
-	}
-	public void setBase(String base) {
-		this.base = base;
-	}
 	@Override
 	public String toString() {
 		return "Config [name=" + name + ", description=" + description
-				+ ", base=" + base + "]";
+				+ ", dependencies=" + dependencies + "]";
 	}
 	public List<String> getDependencies() {
 		return dependencies;

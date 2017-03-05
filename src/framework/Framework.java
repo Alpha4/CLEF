@@ -10,28 +10,116 @@ import java.util.Map.Entry;
 import com.google.gson.*;
 
 public class Framework {
-	
-	// TODO: change to List of extension containers
+
 	private static Map<Class<?>,Map<Class<?>,ExtensionContainer>> extensions;
+	private static List<ExtensionContainer> autorunExtensions;
 
 	public static void main(String[] args) throws Exception {
+		
+		Framework.autorunExtensions = new ArrayList<ExtensionContainer>();
+		Framework.extensions = new HashMap<Class<?>, Map<Class<?>, ExtensionContainer>>();
 
 		/* 1- Load config */
-		Config base = Framework.loadConfig();
+		Config config = Framework.loadConfig();
 		
-		/* 2- Load app config */
-		Config app = Framework.loadConfig(base.getBase());
+		/* 2- Load dependencies */
+		Framework.loadDependencies(config);
 		
-		/* 3- Load extensions */
-		Framework.extensions = Framework.loadExtensions(app);
-		
-		// TODO: Faire les autoruns
-		/* 4- Execute app extension */
-		List<Config> configs = Framework.get(Class.forName("framework.plugin.I"+app.getType()));
-		((IAutorunExtension) Framework.get(Class.forName("framework.plugin.I"+app.getType()), configs.get(0))).run();
+		/* 3- Execute autorun extensions */
+		Framework.executeAutorunExtensions();
 		
 	}
 	
+	public static void loadDependencies(Config frameworkConfig) {
+		
+		List<Config> dependenciesConfigs = Framework.resolveDependencies(frameworkConfig);
+		
+		for(Config conf : dependenciesConfigs) {
+			if (conf.getType() != null) {
+				try {
+					// Get plugin interface class
+					Class<?> plugInterface = Class.forName("framework.plugin.I"+conf.getType());
+					
+					// Create ExtensionContainer
+					ExtensionContainer container = new ExtensionContainer(conf);
+					
+					if (IAutorunExtension.class.isAssignableFrom(plugInterface)) {
+						// Add the container to the autorun extensions
+						Framework.autorunExtensions.add(container);
+					}
+				
+					// Add the container to the extensions
+					if (Framework.extensions.get(plugInterface) == null) {
+						Framework.extensions.put(plugInterface, new HashMap<Class<?>, ExtensionContainer>());
+					}
+					Framework.extensions.get(plugInterface).put(Class.forName(conf.getClasspath()), container);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public static List<Config> resolveDependencies(Config config) {
+		
+		List<Config> dependencies = new ArrayList<Config>();
+		
+		dependencies.add(config);
+		Framework.resolveDependencies(config, dependencies);
+		
+		return dependencies;
+	}
+	
+	public static List<Config> resolveDependencies(Config config, List<Config> dependencies) {
+		
+		for(String classpath : config.getDependencies()) {
+			Config conf = Framework.loadConfig(classpath);
+			
+			boolean found = false;
+			for (Config c : dependencies) {
+				if (c.getClasspath() != null && c.getClasspath().equals(conf.getClasspath())) {
+					found = true;
+				}
+			}
+			
+			if (!found) {
+				dependencies.add(conf);
+				Framework.resolveDependencies(conf, dependencies);
+			}
+		}
+		
+		return dependencies;
+	}
+	
+	private static void executeAutorunExtensions() {
+		
+		for(ExtensionContainer container : Framework.autorunExtensions) {
+			((IAutorunExtension) container.getExtension()).run();
+		}
+		
+	}
+	
+	public static List<ExtensionContainer> get(Class<?> cl) {
+		List<ExtensionContainer> containers = new ArrayList<ExtensionContainer>();
+		
+		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
+			containers.add(container.getValue());
+		}
+		
+		return containers;
+	}
+	
+	public static IExtension get(Class<?> cl, Class<?> cl2) {
+		
+		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
+			if (container.getValue().getMeta().getClasspath().equals(cl2.getName())) {
+				return container.getValue().getExtension();
+			}
+		}
+		
+		return null;
+	}
+
 	public static Config loadConfig() {
 		return loadConfig("");
 	}
@@ -56,76 +144,6 @@ public class Framework {
 		}
 		
 		return config;
-	}
-	
-	public static Map<Class<?>, Map<Class<?>, ExtensionContainer>> loadExtensions(Config app) {
-		
-		Map<Class<?>, Map<Class<?>, ExtensionContainer>> extensions = new HashMap<Class<?>, Map<Class<?>, ExtensionContainer>>();
-		
-		// Load app
-		
-		try {
-			Class<?> plugin = Class.forName("framework.plugin.I"+app.getType());
-			extensions.put(plugin, new HashMap<Class<?>, ExtensionContainer>());
-			extensions.get(plugin).put(Class.forName(app.getClasspath()), new ExtensionContainer(app));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		// Load app's dependencies
-		
-		List<Config> configs = Framework.resolveDependencies(app);
-		
-		for(Config config : configs) {
-			try {
-				Class<?> plugin = Class.forName("framework.plugin.I"+config.getType());
-				if (extensions.get(plugin) == null) {
-					extensions.put(plugin, new HashMap<Class<?>, ExtensionContainer>());
-				}
-				extensions.get(plugin).put(Class.forName(config.getClasspath()), new ExtensionContainer(config));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		//System.out.println(extensions);
-		
-		return extensions;
-	}
-	
-	public static List<Config> resolveDependencies(Config config) {
-		List<Config> dependencies = new ArrayList<Config>();
-		
-		dependencies.add(config);
-		
-		for(String classpath : config.getDependencies()) {
-			Config conf = Framework.loadConfig(classpath);
-			dependencies.addAll(Framework.resolveDependencies(conf));
-		}
-		
-		return dependencies;
-	}
-	
-	public static List<Config> get(Class<?> cl) {
-		List<Config> configs = new ArrayList<Config>();
-		
-		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
-			configs.add(container.getValue().getMeta());
-		}
-		
-		return configs;
-	}
-	
-	public static IExtension get(Class<?> cl, Config config) {
-		
-		
-		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
-			if (container.getValue().getMeta().getClasspath().equals(config.getClasspath())) {
-				return container.getValue().getExtension();
-			}
-		}
-		
-		return null;
 	}
 
 }

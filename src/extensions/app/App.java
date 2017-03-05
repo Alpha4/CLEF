@@ -2,7 +2,7 @@ package extensions.app;
 
 import java.util.List;
 
-import framework.Config;
+import framework.ExtensionContainer;
 import framework.Framework;
 import framework.IAutorunExtension;
 import framework.plugin.IApp;
@@ -15,9 +15,9 @@ public class App implements IAutorunExtension, IApp {
 		
 		String str = "salut!";
 		
-		List<Config> tests = Framework.get(IAffichage.class);
+		List<ExtensionContainer> tests = Framework.get(IAffichage.class);
 		
-		IAffichage test = (IAffichage) Framework.get(IAffichage.class, tests.get(0));
+		IAffichage test = (IAffichage) tests.get(0).getExtension();
 		
 		test.print(str);
 	}
