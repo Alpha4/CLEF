@@ -1,4 +1,4 @@
-package Client;
+package extensions.client;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import MockServ.Serveur;
+import extensions.mockserv.Serveur;
  
 public class Fenetre extends JFrame implements ActionListener{
 	

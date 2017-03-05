@@ -1,3 +1,6 @@
+package framework.plugin;
+
+import java.net.InetAddress;
 
 public interface IMessage {
 
@@ -8,5 +11,9 @@ public interface IMessage {
 	String getPlainText();
 
 	void setPlainText(String plainText);
+
+	InetAddress getAddress();
+
+	void setAddress(InetAddress address);
 
 }

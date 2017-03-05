@@ -1,7 +1,7 @@
-package MockServ;
+package extensions.mockserv;
 
 
-import Client.IServeur;
+import extensions.client.IServeur;
 
 public class Serveur implements IServeur{
 
