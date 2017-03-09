@@ -1,0 +1,5 @@
+{
+	"name": "NetworkServer",
+	"interface": "INetworkServer",
+	"autorun": true
+}

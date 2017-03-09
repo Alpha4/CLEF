@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import extensions.network.Message;
+import extensions.message.Message;
 import framework.plugin.IMessage;
 
 public class SimpleGUI implements IGUI {

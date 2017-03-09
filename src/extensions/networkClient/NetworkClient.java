@@ -1,20 +1,28 @@
-package extensions.network;
+package extensions.networkClient;
 
 import java.io.IOException;
 import java.net.InetAddress;
 
+import extensions.ihm.IGUI;
+import extensions.ihm.SimpleGUI;
+import extensions.message.Message;
+import extensions.network.Network;
 import framework.plugin.IMessage;
 import framework.plugin.INetwork;
 import framework.plugin.INetworkClient;
 
 public class NetworkClient implements INetworkClient {
-
+	
+	// Appeler le Framework.getExtension("INetwork")
 	private INetwork network = Network.getInstance();
 	private String clientName;
 	private InetAddress server;
 	private IMessage m = null;
+	// Appeler le Framework.getExtension("IGUI")
+	private IGUI gui = new SimpleGUI(); 
 
 	public void send(String message) {
+		// Appeler le Framework.getExtension("IMessage")
 		IMessage m = new Message();
 		m.setAddress(server);
 		m.setAuthor(clientName);
@@ -38,7 +46,7 @@ public class NetworkClient implements INetworkClient {
 		this.server = server;
 	}
 
-	public void receive() {
+	private void receive() {
 		try {
 			m = network.receive();
 		} catch (IOException e) {
@@ -47,11 +55,15 @@ public class NetworkClient implements INetworkClient {
 		}
 	}
 
-	public String getAuthor() {
-		return m.getAuthor();
-	}
-
-	public String getMessage() {
-		return m.getPlainText();
+	public void run() {
+		Thread t = new Thread() {
+			public void run () {
+				while(true) {
+					receive();
+					gui.receiveMessage(m);
+				}
+			}
+		};
+		t.start();
 	}
 }
