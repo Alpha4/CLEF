@@ -1,508 +1,512 @@
 package extensions.ihm;
 
-import java.lang.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
-
-import extensions.message.Message;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import framework.plugin.IMessage;
 import framework.plugin.INetworkClient;
 
 public class SimpleGUI implements IGUI {
-   // Connect status constants
-   final static int DISCONNECTED = 0;
-   final static int BEGIN_CONNECT = 1;
-   final static int CONNECTED = 2;
-   
-   // Various GUI components and info
-   private JFrame mainFrame;
-   private JTextArea chatText;
-   private JTextField chatLine;
-   private JLabel statusBar;
-   private JTextField ipField;
-   private JTextField portField;
-   private JTextField pseudoField;
-   private JRadioButton hostOption;
-   private JRadioButton guestOption;
-   private JButton connectButton;
-   private JButton disconnectButton;
-   private JButton sendButton;
-      
-   // Connection info
-   private String hostIP;
-   private int port ;
-   private int connectionStatus;
-   private boolean isHost;
-   private String pseudo;
+	// Connect status constants
+	final static int DISCONNECTED = 0;
+	final static int BEGIN_CONNECT = 1;
+	final static int CONNECTED = 2;
 
-   private INetworkClient inetwork;
-   
-   
-   // Constructeur
-   public SimpleGUI(){
-	   
-	   //inetwork = (INetworkClient) Framework.get(INetworkClient.class);
-	   hostIP = "localhost";
-	   port = 1234;
-	   connectionStatus = DISCONNECTED;
-	   isHost = true;
-	   pseudo = "pseudo";
-	   
-	 }
-   
-  
+	// Various GUI components and info
+	private JFrame mainFrame;
+	private JTextArea chatText;
+	private JTextField chatLine;
+	private JLabel statusBar;
+	private JTextField ipField;
+	private JTextField pseudoField;
+	private JRadioButton hostOption;
+	private JRadioButton guestOption;
+	private JButton connectButton;
+	private JButton disconnectButton;
+	private JButton sendButton;
 
-   private JPanel initOptionsPane() {
-	   	   
-      JPanel pane = null;
-      ActionAdapter buttonListener = null;
+	// Connection info
+	private String hostIP;
+	private int connectionStatus;
+	private boolean isHost;
+	private String pseudo;
 
-      // Create an options pane
-      JPanel optionsPane = new JPanel(new GridLayout(5, 1));
-
-      // IP address input
-      pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      pane.add(new JLabel("Host IP:"));
-      ipField = new JTextField(10); ipField.setText(hostIP);
-      ipField.setEditable(true);
-      pane.add(ipField);
-      optionsPane.add(pane);
-      
-      // Pseudo input
-      pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      pane.add(new JLabel("Pseudo:"));
-      pseudoField = new JTextField(10); pseudoField.setText(pseudo);
-      pseudoField.setEditable(true);
-      pane.add(pseudoField);
-      optionsPane.add(pane);      
-
-      // Port input
-      pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      pane.add(new JLabel("Port:"));
-      portField = new JTextField(10); portField.setEditable(true);
-      portField.setText((new Integer(port)).toString());
-      pane.add(portField);
-      optionsPane.add(pane);
-
-      // Host/guest option
-      ButtonGroup bg = new ButtonGroup();
-      hostOption = new JRadioButton("Host", true);
-      hostOption.setMnemonic(KeyEvent.VK_H);
-      guestOption = new JRadioButton("Guest", false);
-      guestOption.setMnemonic(KeyEvent.VK_G);
-      bg.add(hostOption);
-      bg.add(guestOption);
-      pane = new JPanel(new GridLayout(1, 2));
-      pane.add(hostOption);
-      pane.add(guestOption);
-      optionsPane.add(pane);
-      
-     
-
-      // Connect/disconnect buttons
-      JPanel buttonPane = new JPanel(new GridLayout(1, 2));
-      buttonListener = new ActionAdapter() {
-            public void actionPerformed(ActionEvent e) {
-               // Request a connection initiation
-               if (e.getActionCommand().equals("connect")) {
-                  connectButton.setEnabled(false);
-                  disconnectButton.setEnabled(true);
-                  connectionStatus = BEGIN_CONNECT;
-                  ipField.setEnabled(false);
-                  portField.setEnabled(false);
-                  hostOption.setEnabled(false);
-                  guestOption.setEnabled(false);
-                  chatLine.setEnabled(true);
-                  statusBar.setText("Online");
-                  setPseudo(getPseudoField().getText());
-                  pseudoField.setEnabled(false);
-                  sendButton.setEnabled(true);
-                  mainFrame.repaint();
-
-                 
-               }
-               // Disconnect
-               if (e.getActionCommand().equals("disconnect")){
-                  connectButton.setEnabled(true);
-                  disconnectButton.setEnabled(false);
-                  connectionStatus = DISCONNECTED;
-                  ipField.setEnabled(true);
-                  portField.setEnabled(true);
-                  hostOption.setEnabled(true);
-                  guestOption.setEnabled(true);
-                  chatLine.setText(""); chatLine.setEnabled(false);
-                  statusBar.setText("Offline");
-                  pseudoField.setEnabled(true);
-                  sendButton.setEnabled(false);
-                  mainFrame.repaint();
-               }
-               
-               if (e.getActionCommand().equals("send")){
-            	   sendMessage();
-            	   mainFrame.repaint();
-            	   
-            	   
-            	   
-            	   
-               }
-                      
-               
-               
-            }
-         };
-      connectButton = new JButton("Connect");
-      connectButton.setMnemonic(KeyEvent.VK_C);
-      connectButton.setActionCommand("connect");
-      connectButton.addActionListener(buttonListener);
-      connectButton.setEnabled(true);
-      disconnectButton = new JButton("Disconnect");
-      disconnectButton.setMnemonic(KeyEvent.VK_D);
-      disconnectButton.setActionCommand("disconnect");
-      disconnectButton.addActionListener(buttonListener);
-      disconnectButton.setEnabled(false);
-      sendButton = new JButton("Send");
-      sendButton.setMnemonic(KeyEvent.VK_ENTER);
-      sendButton.setActionCommand("send");
-      sendButton.addActionListener(buttonListener);
-      sendButton.setEnabled(false);
-      buttonPane.add(connectButton);
-      buttonPane.add(disconnectButton);
-      buttonPane.add(sendButton);
-      optionsPane.add(buttonPane);
-
-      return optionsPane;
-   }
-
-   public void initGUI() {
-      // Set up the status bar
-      statusBar = new JLabel();
-      statusBar.setText("Offline");
-
-      // Set up the options pane
-      JPanel optionsPane = initOptionsPane();
-
-      // Set up the chat pane
-      JPanel chatPane = new JPanel(new BorderLayout());
-      chatText = new JTextArea(10, 20);
-      chatText.setLineWrap(true);
-      chatText.setEditable(false);
-      chatText.setForeground(Color.blue);
-      JScrollPane chatTextPane = new JScrollPane(chatText,
-         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      chatLine = new JTextField();
-      chatLine.setEnabled(false);      
-      chatPane.add(chatLine, BorderLayout.SOUTH);
-      chatPane.add(chatTextPane, BorderLayout.CENTER);
-      chatPane.setPreferredSize(new Dimension(200, 200));
-
-      KeyboardListener keyListener = new KeyboardListener() {
-    	    @Override
-    	    public void keyPressed(KeyEvent e) {
-    	        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-    	            sendMessage();
-    	        }
-    	    }
-    	};
-    	
-    	chatLine.addKeyListener(keyListener);
-      
-      // Set up the main pane
-      JPanel mainPane = new JPanel(new BorderLayout());
-      mainPane.add(statusBar, BorderLayout.SOUTH);
-      mainPane.add(optionsPane, BorderLayout.WEST);
-      mainPane.add(chatPane, BorderLayout.CENTER);
-      
-         
-      
-      // Set up the main frame
-      mainFrame = new JFrame("Simple TCP Chat");
-      mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      mainFrame.setContentPane(mainPane);
-      mainFrame.setSize(mainFrame.getPreferredSize());
-      mainFrame.setLocation(200, 200);
-      mainFrame.pack();
-      mainFrame.setVisible(true);
-      
-      
-   }
-
-   public static void main(String args[]) {
-      SimpleGUI simple = new SimpleGUI();
-      simple.initGUI();
-    }
+	private INetworkClient inetwork;
 
 
-public void receiveMessage(IMessage m) {
+	// Constructeur
+	public SimpleGUI(){
+
+		//inetwork = (INetworkClient) Framework.get(INetworkClient.class);
+		hostIP = "localhost";
+		connectionStatus = DISCONNECTED;
+		isHost = true;
+		pseudo = "pseudo";
+
+	}
+
+	/**
+	 * Generation du panneau de gauche (infos) 
+	 * @return un JPanel
+	 */
+	private JPanel initOptionsPane() {
+
+		JPanel pane = null;
+		ActionAdapter buttonListener = null;
+
+		// Create an options pane
+		JPanel optionsPane = new JPanel(new GridLayout(4, 1));
+
+		// Pseudo input
+		pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		pane.add(new JLabel("Pseudo:"));
+		pseudoField = new JTextField(15); pseudoField.setText(pseudo);
+		pseudoField.setEditable(true);
+		pane.add(pseudoField);
+		optionsPane.add(pane);   
+
+		// IP address input
+		pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		pane.add(new JLabel("Host IP:"));
+		ipField = new JTextField(15); ipField.setText(hostIP);
+		ipField.setEditable(true);
+		pane.add(ipField);
+		optionsPane.add(pane);
 		
-	String author = m.getAuthor();
-	String text = m.getPlainText();
-	
-	String chat = chatText.getText();
-	String message = author +  " : " + text;
-	String newChat = chat + "\n" + message;
-	
-	chatText.setText(newChat);
-	mainFrame.repaint();
-	
-}
+		// Host/guest option
+		ButtonGroup bg = new ButtonGroup();
+		hostOption = new JRadioButton("Host", true);
+		hostOption.setMnemonic(KeyEvent.VK_H);
+		guestOption = new JRadioButton("Guest", false);
+		guestOption.setMnemonic(KeyEvent.VK_G);
+		bg.add(hostOption);
+		bg.add(guestOption);
+		pane = new JPanel(new GridLayout(1, 2));
+		pane.add(hostOption);
+		pane.add(guestOption);
+		optionsPane.add(pane); 
+
+		// Connect/disconnect buttons
+		JPanel buttonPane = new JPanel(new GridLayout(1, 2));
+		buttonListener = new ActionAdapter() {
+			public void actionPerformed(ActionEvent e) {
+				// Request a connection initiation
+				if (e.getActionCommand().equals("connect")) {
+					chatLine.setEnabled(true);
+					sendButton.setEnabled(true);
+					disconnectButton.setEnabled(true);
+					connectButton.setEnabled(false);
+					hostOption.setEnabled(false);
+					guestOption.setEnabled(false);
+					ipField.setEnabled(false);
+					pseudoField.setEnabled(false);
+
+					connectionStatus = BEGIN_CONNECT;
+
+					statusBar.setText("Online");
+					setPseudo(getPseudoField().getText());
+
+					mainFrame.repaint();
 
 
-public void sendMessage() {
-	
-	String message = chatLine.getText();
-	
-	
-	if (!message.isEmpty()){
+				}
+				// Disconnect
+				if (e.getActionCommand().equals("disconnect")){
+
+					connectButton.setEnabled(true);
+					ipField.setEnabled(true);
+					hostOption.setEnabled(true);
+					guestOption.setEnabled(true);
+					pseudoField.setEnabled(true);
+					sendButton.setEnabled(false);
+					disconnectButton.setEnabled(false);
+
+					connectionStatus = DISCONNECTED;
+
+					chatLine.setText(""); 
+					chatLine.setEnabled(false);
+
+					statusBar.setText("Offline");
+
+					mainFrame.repaint();
+				}
+
+				if (e.getActionCommand().equals("send")){
+					sendMessage();
+					mainFrame.repaint();
+
+
+
+
+				}
+
+
+
+			}
+		};
 		
-		//inetwork.send(message);
-		String chat = chatText.getText();
-		String newChat = chat + "\n" + pseudo + " : " + message;
-	
-		chatText.setText(newChat);
-	
-		chatLine.setText("");
+		//connection button
+		connectButton = new JButton("Connect");
+		connectButton.setMnemonic(KeyEvent.VK_C);
+		connectButton.setActionCommand("connect");
+		connectButton.addActionListener(buttonListener);
+		connectButton.setEnabled(true);
+		
+		//disconnection button
+		disconnectButton = new JButton("Disconnect");
+		disconnectButton.setMnemonic(KeyEvent.VK_D);
+		disconnectButton.setActionCommand("disconnect");
+		disconnectButton.addActionListener(buttonListener);
+		disconnectButton.setEnabled(false);
+		
+		//send button
+		sendButton = new JButton("Send");
+		sendButton.setMnemonic(KeyEvent.VK_ENTER);
+		sendButton.setActionCommand("send");
+		sendButton.addActionListener(buttonListener);
+		sendButton.setEnabled(false);
+		
+		//ajout des buttons au panel
+		buttonPane.add(connectButton);
+		buttonPane.add(disconnectButton);
+		buttonPane.add(sendButton);
+		optionsPane.add(buttonPane);
+
+		return optionsPane;
 	}
 	
-}
+	/**
+	 * Initialisation du GUI complet
+	 */
+	public void initGUI() {
+		// Set up the status bar
+		statusBar = new JLabel();
+		statusBar.setText("Offline");
 
-@Override
-public void receiveRoomList() {
-	// TODO Auto-generated method stub
-	
-}
+		// Set up the options pane
+		JPanel optionsPane = initOptionsPane();
 
-@Override
-public void connectedToServResponse() {
-	// TODO Auto-generated method stub
-	
-}
+		// Set up the chat pane
+		JPanel chatPane = new JPanel(new BorderLayout());
+		chatText = new JTextArea(10, 20);
+		chatText.setLineWrap(true);
+		chatText.setEditable(false);
+		chatText.setForeground(Color.blue);
+		JScrollPane chatTextPane = new JScrollPane(chatText,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		chatLine = new JTextField();
+		chatLine.setEnabled(false);      
+		
+		chatPane.add(chatLine, BorderLayout.SOUTH);
+		chatPane.add(chatTextPane, BorderLayout.CENTER);
+		chatPane.setPreferredSize(new Dimension(200, 200));
 
-@Override
-public void disconnectedFromServer() {
-	// TODO Auto-generated method stub
-	
-}
+		//listener pour envoyer les messages avec entrée
+		KeyboardListener keyListener = new KeyboardListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					sendMessage();
+				}
+			}
+		};
 
+		chatLine.addKeyListener(keyListener);
 
+		// Set up the main pane
+		JPanel mainPane = new JPanel(new BorderLayout());
+		mainPane.add(statusBar, BorderLayout.SOUTH);
+		mainPane.add(optionsPane, BorderLayout.WEST);
+		mainPane.add(chatPane, BorderLayout.CENTER);
 
-public JFrame getMainFrame() {
-	return mainFrame;
-}
 
 
+		// Set up the main frame
+		mainFrame = new JFrame("Simple TCP Chat");
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setContentPane(mainPane);
+		mainFrame.setSize(mainFrame.getPreferredSize());
+		mainFrame.setLocation(200, 200);
+		mainFrame.pack();
+		mainFrame.setVisible(true);
 
-public void setMainFrame(JFrame mainFrame) {
-	this.mainFrame = mainFrame;
-}
 
+	}
 
+	public static void main(String args[]) {
+		SimpleGUI simple = new SimpleGUI();
+		simple.initGUI();
+	}
 
-public JTextArea getChatText() {
-	return chatText;
-}
 
+	public void receiveMessage(IMessage m) {
 
+		String author = m.getAuthor();
+		String text = m.getPlainText();
 
-public void setChatText(JTextArea chatText) {
-	this.chatText = chatText;
-}
+		String chat = chatText.getText();
+		String message = author +  " : " + text;
+		String newChat = chat + "\n" + message;
 
+		chatText.setText(newChat);
+		mainFrame.repaint();
 
+	}
 
-public JTextField getChatLine() {
-	return chatLine;
-}
 
+	public void sendMessage() {
 
+		String message = chatLine.getText();
 
-public void setChatLine(JTextField chatLine) {
-	this.chatLine = chatLine;
-}
 
+		if (!message.isEmpty()){
 
+			//inetwork.send(message);
+			String chat = chatText.getText();
+			String newChat = chat + "\n" + pseudo + " : " + message;
 
-public JLabel getStatusBar() {
-	return statusBar;
-}
+			chatText.setText(newChat);
 
+			chatLine.setText("");
+		}
 
+	}
 
-public void setStatusBar(JLabel statusBar) {
-	this.statusBar = statusBar;
-}
+	@Override
+	public void receiveRoomList() {
+		// TODO Auto-generated method stub
 
+	}
 
+	@Override
+	public void connectedToServResponse() {
+		// TODO Auto-generated method stub
 
-public JTextField getIpField() {
-	return ipField;
-}
+	}
 
+	@Override
+	public void disconnectedFromServer() {
+		// TODO Auto-generated method stub
 
+	}
 
-public void setIpField(JTextField ipField) {
-	this.ipField = ipField;
-}
 
 
+	public JFrame getMainFrame() {
+		return mainFrame;
+	}
 
-public JTextField getPortField() {
-	return portField;
-}
 
 
+	public void setMainFrame(JFrame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
 
-public void setPortField(JTextField portField) {
-	this.portField = portField;
-}
 
 
+	public JTextArea getChatText() {
+		return chatText;
+	}
 
-public JTextField getPseudoField() {
-	return pseudoField;
-}
 
 
+	public void setChatText(JTextArea chatText) {
+		this.chatText = chatText;
+	}
 
-public void setPseudoField(JTextField pseudoField) {
-	this.pseudoField = pseudoField;
-}
 
 
+	public JTextField getChatLine() {
+		return chatLine;
+	}
 
-public JRadioButton getHostOption() {
-	return hostOption;
-}
 
 
+	public void setChatLine(JTextField chatLine) {
+		this.chatLine = chatLine;
+	}
 
-public void setHostOption(JRadioButton hostOption) {
-	this.hostOption = hostOption;
-}
 
 
+	public JLabel getStatusBar() {
+		return statusBar;
+	}
 
-public JRadioButton getGuestOption() {
-	return guestOption;
-}
 
 
+	public void setStatusBar(JLabel statusBar) {
+		this.statusBar = statusBar;
+	}
 
-public void setGuestOption(JRadioButton guestOption) {
-	this.guestOption = guestOption;
-}
 
 
+	public JTextField getIpField() {
+		return ipField;
+	}
 
-public JButton getConnectButton() {
-	return connectButton;
-}
 
+	public void setIpField(JTextField ipField) {
+		this.ipField = ipField;
+	}
 
 
-public void setConnectButton(JButton connectButton) {
-	this.connectButton = connectButton;
-}
+	public JTextField getPseudoField() {
+		return pseudoField;
+	}
 
 
 
-public JButton getDisconnectButton() {
-	return disconnectButton;
-}
+	public void setPseudoField(JTextField pseudoField) {
+		this.pseudoField = pseudoField;
+	}
 
 
 
-public void setDisconnectButton(JButton disconnectButton) {
-	this.disconnectButton = disconnectButton;
-}
+	public JRadioButton getHostOption() {
+		return hostOption;
+	}
 
 
 
-public JButton getSendButton() {
-	return sendButton;
-}
+	public void setHostOption(JRadioButton hostOption) {
+		this.hostOption = hostOption;
+	}
 
 
 
-public void setSendButton(JButton sendButton) {
-	this.sendButton = sendButton;
-}
+	public JRadioButton getGuestOption() {
+		return guestOption;
+	}
 
 
 
-public String getHostIP() {
-	return hostIP;
-}
+	public void setGuestOption(JRadioButton guestOption) {
+		this.guestOption = guestOption;
+	}
 
 
 
-public void setHostIP(String hostIP) {
-	this.hostIP = hostIP;
-}
+	public JButton getConnectButton() {
+		return connectButton;
+	}
 
 
 
-public int getPort() {
-	return port;
-}
+	public void setConnectButton(JButton connectButton) {
+		this.connectButton = connectButton;
+	}
 
 
 
-public void setPort(int port) {
-	this.port = port;
-}
+	public JButton getDisconnectButton() {
+		return disconnectButton;
+	}
 
 
 
-public int getConnectionStatus() {
-	return connectionStatus;
-}
+	public void setDisconnectButton(JButton disconnectButton) {
+		this.disconnectButton = disconnectButton;
+	}
 
 
 
-public void setConnectionStatus(int connectionStatus) {
-	this.connectionStatus = connectionStatus;
-}
+	public JButton getSendButton() {
+		return sendButton;
+	}
 
 
 
-public boolean isHost() {
-	return isHost;
-}
+	public void setSendButton(JButton sendButton) {
+		this.sendButton = sendButton;
+	}
 
 
 
-public void setHost(boolean isHost) {
-	this.isHost = isHost;
-}
+	public String getHostIP() {
+		return hostIP;
+	}
 
 
 
-public String getPseudo() {
-	return pseudo;
-}
+	public void setHostIP(String hostIP) {
+		this.hostIP = hostIP;
+		/*try {
+			getInetwork().setServer(InetAddress.getByName(hostIP));
+		} catch (UnknownHostException e) {
+			getStatusBar().setText("Unknown host");
+			e.printStackTrace();
+		}*/
+	}
 
 
 
-public void setPseudo(String pseudo) {
-	this.pseudo = pseudo;
-}
 
+	public int getConnectionStatus() {
+		return connectionStatus;
+	}
 
 
-public INetworkClient getInetwork() {
-	return inetwork;
-}
 
+	public void setConnectionStatus(int connectionStatus) {
+		this.connectionStatus = connectionStatus;
+	}
 
 
-public void setInetwork(INetworkClient inetwork) {
-	this.inetwork = inetwork;
-}
+
+	public boolean isHost() {
+		return isHost;
+	}
+
+
+
+	public void setHost(boolean isHost) {
+		this.isHost = isHost;
+	}
+
+
+
+	public String getPseudo() {
+		return pseudo;
+	}
+
+
+
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
+		//getInetwork().setClientName(pseudo);
+	}
+
+
+
+	public INetworkClient getInetwork() {
+		return inetwork;
+	}
+
+
+
+	public void setInetwork(INetworkClient inetwork) {
+		this.inetwork = inetwork;
+	}
 
 
 
@@ -513,27 +517,28 @@ public void setInetwork(INetworkClient inetwork) {
 
 // Action adapter for easy event-listener coding
 class ActionAdapter implements ActionListener {
-   public void actionPerformed(ActionEvent e) {}
+	public void actionPerformed(ActionEvent e) {}
 }
+//Keyboard listener for easy key-listener coding
 class KeyboardListener implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }
 
 
