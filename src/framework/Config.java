@@ -8,8 +8,8 @@ public class Config {
 	String name;
 	String description;
 	String type;
-	String classpath;
-	List<String> dependencies = new ArrayList<String>();
+	boolean autorun;
+	List<String> extensions = new ArrayList<String>();
 	
 	public String getName() {
 		return name;
@@ -26,25 +26,25 @@ public class Config {
 	@Override
 	public String toString() {
 		return "Config [name=" + name + ", description=" + description
-				+ ", dependencies=" + dependencies + "]";
+				+ ", extensions=" + extensions + ", autorun=" + autorun + "]";
 	}
-	public List<String> getDependencies() {
-		return dependencies;
+	public List<String> getExtensions() {
+		return extensions;
 	}
-	public void setDependencies(List<String> dependencies) {
-		this.dependencies = dependencies;
-	}
-	public String getClasspath() {
-		return classpath;
-	}
-	public void setClasspath(String classpath) {
-		this.classpath = classpath;
+	public void setExtensions(List<String> extensions) {
+		this.extensions = extensions;
 	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public boolean isAutorun() {
+		return this.autorun;
+	}
+	public void setAutorun(boolean autorun) {
+		this.autorun = autorun;
 	}
 	
 }

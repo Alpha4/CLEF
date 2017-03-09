@@ -1,7 +1,7 @@
 package framework.plugin;
 
-import framework.IAutorunExtension;
+import framework.IExtension;
 
-public interface IApp extends IAutorunExtension{
+public interface IApp extends IExtension{
 
 }

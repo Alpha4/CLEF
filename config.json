@@ -1,7 +1,9 @@
 {
 	"name": "CLEF",
 	"description": "Truc",
-	"dependencies": [
-		"extensions.app.App"
+	"extensions": [
+		"extensions.monitoring.Monitoring",
+		"extensions.app.App",
+		"extensions.test.Test"
 	]
 }
