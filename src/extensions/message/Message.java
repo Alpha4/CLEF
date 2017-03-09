@@ -1,4 +1,4 @@
-package extensions.network;
+package extensions.message;
 
 import java.net.InetAddress;
 

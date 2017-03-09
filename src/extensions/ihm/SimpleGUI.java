@@ -6,8 +6,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import extensions.network.Message;
-import framework.Framework;
+
+import extensions.message.Message;
+
 import framework.plugin.IMessage;
 import framework.plugin.INetworkClient;
 

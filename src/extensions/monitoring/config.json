@@ -1,0 +1,5 @@
+{
+	"name": "Monitoring",
+	"type": "IMonitoring",
+	"autorun": true
+}

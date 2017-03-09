@@ -14,10 +14,5 @@ public interface INetworkClient {
 
 	void setServer(InetAddress server);
 
-	void receive();
-
-	String getAuthor();
-
-	String getMessage();
-
+	void run();
 }

@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import extensions.message.Message;
 import framework.plugin.IMessage;
 import framework.plugin.INetwork;
 

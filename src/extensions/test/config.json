@@ -1,8 +1,5 @@
 {
 	"name": "Test",
-	"classpath": "extensions.test.Test",
-	"type": "Affichage",
-	"dependencies": [
-		"extensions.app.App"
-	]
+	"type": "IAffichage",
+	"autorun": false
 }

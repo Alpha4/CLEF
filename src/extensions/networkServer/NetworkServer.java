@@ -1,9 +1,10 @@
-package extensions.network;
+package extensions.networkServer;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 
+import extensions.network.Network;
 import framework.plugin.IMessage;
 import framework.plugin.INetwork;
 import framework.plugin.INetworkServer;
@@ -11,7 +12,7 @@ import framework.plugin.INetworkServer;
 public class NetworkServer implements INetworkServer {
 
 	private List<InetAddress> clients;
-
+	// Appeler le Framework.getExtension("INetwork")
 	private INetwork network = Network.getInstance();
 
 	private void messageReceived(IMessage message) {

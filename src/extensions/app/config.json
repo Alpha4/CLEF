@@ -1,8 +1,5 @@
 {
 	"name": "App",
-	"classpath": "extensions.app.App",
-	"type": "App",
-	"dependencies": [
-		"extensions.test.Test"
-	]
+	"type": "IApp",
+	"autorun": true
 }

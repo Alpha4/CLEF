@@ -1,0 +1,5 @@
+{
+	"name": "NetworkClient",
+	"interface": "INetworkClient",
+	"autorun": true
+}
