@@ -148,7 +148,6 @@ public class SimpleGUI implements IGUI {
             	   
             	   
             	   
-            	   
                }
                       
                
@@ -166,7 +165,7 @@ public class SimpleGUI implements IGUI {
       disconnectButton.addActionListener(buttonListener);
       disconnectButton.setEnabled(false);
       sendButton = new JButton("Send");
-      sendButton.setMnemonic(KeyEvent.VK_C);
+      sendButton.setMnemonic(KeyEvent.VK_ENTER);
       sendButton.setActionCommand("send");
       sendButton.addActionListener(buttonListener);
       sendButton.setEnabled(false);
@@ -196,11 +195,22 @@ public class SimpleGUI implements IGUI {
          JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       chatLine = new JTextField();
-      chatLine.setEnabled(false);
+      chatLine.setEnabled(false);      
       chatPane.add(chatLine, BorderLayout.SOUTH);
       chatPane.add(chatTextPane, BorderLayout.CENTER);
       chatPane.setPreferredSize(new Dimension(200, 200));
 
+      KeyboardListener keyListener = new KeyboardListener() {
+    	    @Override
+    	    public void keyPressed(KeyEvent e) {
+    	        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+    	            sendMessage();
+    	        }
+    	    }
+    	};
+    	
+    	chatLine.addKeyListener(keyListener);
+      
       // Set up the main pane
       JPanel mainPane = new JPanel(new BorderLayout());
       mainPane.add(statusBar, BorderLayout.SOUTH);
@@ -504,6 +514,26 @@ public void setInetwork(INetworkClient inetwork) {
 // Action adapter for easy event-listener coding
 class ActionAdapter implements ActionListener {
    public void actionPerformed(ActionEvent e) {}
+}
+class KeyboardListener implements KeyListener {
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
 
 
