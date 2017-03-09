@@ -1,6 +1,6 @@
 {
 	"name": "SimpleGUI",
 	"type": "IGUI",
-	"autorun": false
+	"autorun": true
 
 }
