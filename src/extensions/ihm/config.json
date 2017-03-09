@@ -1,9 +1,6 @@
 {
 	"name": "SimpleGUI",
-	"classpath": "extensions.ihm.SimpleGUI",
-	"type": "Affichage",
-	"dependencies": [
-		"extensions.app.App",
-		"extensions.network.Network"
-	]
+	"type": "IGUI",
+	"autorun": false
+
 }
