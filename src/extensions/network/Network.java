@@ -15,25 +15,36 @@ public class Network implements INetwork {
 	private static INetwork onlyInstance = new Network();
 	private DatagramSocket sendingSocket;
 	private DatagramSocket receivingSocket;
-	private final int port = 3682; // FIX ME : magic port
+	private int receivePort;
+	private int sendPort;
 	private static final int size = 1024; // FIX ME : magic size
 	static byte[] buffer = new byte[size];
 
 	private Network() {
 		try {
 			sendingSocket = new DatagramSocket();
-			receivingSocket = new DatagramSocket(port);
+			sendPort = sendingSocket.getLocalPort();
+			receivingSocket = new DatagramSocket();
+			receivePort = receivingSocket.getLocalPort();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	public int getReceivePort() {
+		return receivePort;
+	}
+	
+	public int getSendPort() {
+		return sendPort;
+	}
+	
 	public static INetwork getInstance() {
 		// TODO Auto-generated method stub
 		return onlyInstance;
 	}
-
+	
 	public IMessage receive() throws IOException {
 		DatagramPacket in = new DatagramPacket(buffer, buffer.length);
 		receivingSocket.receive(in);
@@ -57,6 +68,12 @@ public class Network implements INetwork {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
