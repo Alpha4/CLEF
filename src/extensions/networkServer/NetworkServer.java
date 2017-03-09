@@ -25,15 +25,15 @@ public class NetworkServer implements INetworkServer {
 	}
 
 	public void run() {
-		while (true) {
-			IMessage message = null;
-			try {
-				message = network.receive();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			messageReceived(message);
-		}
+				while (true) {
+					IMessage message = null;
+					try {
+						message = network.receive();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					messageReceived(message);
+				}
 	}
 }

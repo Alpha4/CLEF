@@ -42,7 +42,7 @@ Chaque message reçu est envoyé à tous les clients connus.
 
 Etat d'avancement:
 
-Fini
+Encore quelques fixes à faire
 
 ### Network Client
 
@@ -52,4 +52,4 @@ Surcouche de Network pour envoyer et recevoir des messages.
 
 Etat d'avancement:
 
-Fini
+Encore quelques fixes à faire

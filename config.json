@@ -2,7 +2,7 @@
 	"name": "CLEF",
 	"description": "Truc",
 	"extensions": [
-		"extensions.networkServer.NetworkServer",
+		"extensions.networkClient.NetworkClient",
 		"extensions.network.Network",
 		"extensions.message.Message"
 	]

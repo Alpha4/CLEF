@@ -2,6 +2,7 @@ package extensions.networkClient;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import extensions.ihm.IGUI;
 import extensions.ihm.SimpleGUI;
@@ -19,7 +20,7 @@ public class NetworkClient implements INetworkClient {
 	private InetAddress server;
 	private IMessage m = null;
 	// Appeler le Framework.getExtension("IGUI")
-	private IGUI gui = new SimpleGUI(); 
+	//private IGUI gui = new SimpleGUI(); 
 
 	public void send(String message) {
 		// Appeler le Framework.getExtension("IMessage")
@@ -42,8 +43,12 @@ public class NetworkClient implements INetworkClient {
 		return server;
 	}
 
-	public void setServer(InetAddress server) {
-		this.server = server;
+	public void setServer(String server) {
+		try {
+			this.server = InetAddress.getByName(server);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void receive() {
@@ -60,10 +65,15 @@ public class NetworkClient implements INetworkClient {
 			public void run () {
 				while(true) {
 					receive();
-					gui.receiveMessage(m);
+					//gui.receiveMessage(m);
+					System.out.println(m.getPlainText());
 				}
 			}
 		};
 		t.start();
+		
+		setServer("localhost");
+		setClientName("Toto");
+		send("Salut! Comment ça va?");
 	}
 }

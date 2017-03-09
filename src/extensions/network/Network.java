@@ -62,7 +62,7 @@ public class Network implements INetwork {
 	public void send(IMessage m, InetAddress address) {
 		String message = m.getAuthor() + "/" + m.getPlainText();
 		DatagramPacket out = new DatagramPacket(message.getBytes(), message.getBytes().length, address, sendPort);
-		
+		System.out.println(message);
 		try {
 			sendingSocket.send(out);
 		} catch (IOException e) {

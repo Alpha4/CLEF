@@ -14,7 +14,7 @@ public interface INetworkClient extends IExtension {
 
 	InetAddress getServer();
 
-	void setServer(InetAddress server);
+	void setServer(String server);
 
 	void run();
 }

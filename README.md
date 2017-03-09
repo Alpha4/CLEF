@@ -7,5 +7,5 @@ Lien github: https://github.com/errorname/CLEF
 ## Lancer l'application
 
 Ouvrir eclipse
-Charger le projet
+Charger le projet maven
 Run le projet
