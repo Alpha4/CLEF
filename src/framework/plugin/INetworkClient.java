@@ -2,7 +2,9 @@ package framework.plugin;
 
 import java.net.InetAddress;
 
-public interface INetworkClient {
+import framework.IExtension;
+
+public interface INetworkClient extends IExtension {
 
 	void send(String message);
 

@@ -13,7 +13,7 @@ public class App implements IApp {
 
 	public void run() {
 		
-		// Load monitoring
+		// Get monitoring
 		IMonitoring monitor = (IMonitoring) Framework.getExtension(IMonitoring.class);
 		
 		// Show status

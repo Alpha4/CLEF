@@ -1,5 +1,5 @@
 {
 	"name": "NetworkServer",
-	"interface": "INetworkServer",
+	"type": "INetworkServer",
 	"autorun": true
 }

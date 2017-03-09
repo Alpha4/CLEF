@@ -1,6 +1,8 @@
 package framework.plugin;
 
-public interface INetworkServer {
+import framework.IExtension;
+
+public interface INetworkServer extends IExtension {
 
 	void run();
 
