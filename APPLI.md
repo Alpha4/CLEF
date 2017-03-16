@@ -18,11 +18,11 @@ Déjà compatible avec les autres plugins (théoriquement)
 
 Description:
 
-Monitoring des extensions. Peut interargir avec elles et connaitre leurs status.
+Monitoring des extensions. Peut interargir avec elles (load and kill) et connaitre leurs status.
 
 Etat d'avancement:
 
-Récupère les informations (status) des extensions. Reste à lui faire faire des actions sur les extensions (Ex: charger ou kill une extension)
+Fini
 
 ### Network
 

@@ -43,11 +43,11 @@ Chaque plugin possède un fichier `config.json` ayant le format suivant:
 {
     "name": "Affichage", // Nom du plugin
     "type": "IAffichage", // Interface du plugin
-    "autorun": false // Charge le plugin au lancement de l'application si vrai
+    "autorun": false, // Charge le plugin au lancement de l'application si vrai
+    "killable": true // Indique si ce plugin peut être kill au runtime
 }
 ```
 
 ## Etat d'avancement
 
-- Rajouter une description des plugins dans les fichiers de config
-- Monitoring simple fait, à améliorer pour être plus actif
+FINI
