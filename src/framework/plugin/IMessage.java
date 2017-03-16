@@ -15,5 +15,9 @@ public interface IMessage {
 	InetAddress getAddress();
 
 	void setAddress(InetAddress address);
+	
+	int getPort();
+
+	void setPort(int port);
 
 }

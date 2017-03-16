@@ -18,6 +18,7 @@ public class NetworkClient implements INetworkClient {
 	private INetwork network = Network.getInstance();
 	private String clientName;
 	private InetAddress server;
+	private int serverPort;
 	private IMessage m = null;
 	// Appeler le Framework.getExtension("IGUI")
 	//private IGUI gui = new SimpleGUI(); 
@@ -28,7 +29,7 @@ public class NetworkClient implements INetworkClient {
 		m.setAddress(server);
 		m.setAuthor(clientName);
 		m.setPlainText(message);
-		network.send(m, server);
+		network.send(m, server, serverPort);
 	}
 
 	public String getClientName() {
@@ -49,6 +50,10 @@ public class NetworkClient implements INetworkClient {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setServerPort( int port) {
+		this.serverPort = port;
 	}
 
 	private void receive() {
@@ -73,6 +78,7 @@ public class NetworkClient implements INetworkClient {
 		t.start();
 		
 		setServer("localhost");
+		setServerPort(51839);
 		setClientName("Toto");
 		send("Salut! Comment ça va?");
 	}

@@ -9,6 +9,6 @@ public interface INetwork extends IExtension {
 
 	IMessage receive() throws IOException;
 
-	void send(IMessage m, InetAddress address);
+	void send(IMessage m, InetAddress address, int port);
 
 }

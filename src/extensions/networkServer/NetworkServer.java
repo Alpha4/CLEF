@@ -2,6 +2,8 @@ package extensions.networkServer;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import extensions.network.Network;
@@ -11,29 +13,38 @@ import framework.plugin.INetworkServer;
 
 public class NetworkServer implements INetworkServer {
 
-	private List<InetAddress> clients;
+	private List<Client> clients;
+	
 	// Appeler le Framework.getExtension("INetwork")
 	private INetwork network = Network.getInstance();
+	
+	public NetworkServer() {
+		clients = new ArrayList<Client>();
+	}
 
 	private void messageReceived(IMessage message) {
-		if (!clients.contains(message.getAddress()))
-			clients.add(message.getAddress());
-
-		for (InetAddress client : clients) {
-			network.send(message, client);
+		Client c = new Client(message.getPort(), message.getAddress());
+		
+		if (!clients.contains(c))
+			clients.add(c);
+		
+		for (Client client : clients) {
+			System.out.println(client.getAddress());
+			network.send(message, client.getAddress(),client.getPort());
 		}
 	}
 
 	public void run() {
-				while (true) {
-					IMessage message = null;
-					try {
-						message = network.receive();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					messageReceived(message);
-				}
+		System.out.println("Network Server lancé sur le port : "+((Network) network).getReceivePort());
+		while (true) {
+			IMessage message = null;
+			try {
+				message = network.receive();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			messageReceived(message);
+		}
 	}
 }
