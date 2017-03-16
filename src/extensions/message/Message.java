@@ -41,6 +41,12 @@ public class Message implements IMessage {
 	public void setPort(int port) {
 		this.port = port;
 	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

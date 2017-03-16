@@ -2,7 +2,9 @@ package framework.plugin;
 
 import java.net.InetAddress;
 
-public interface IMessage {
+import framework.IExtension;
+
+public interface IMessage extends IExtension{
 
 	String getAuthor();
 

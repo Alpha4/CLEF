@@ -30,6 +30,7 @@ public class NetworkServer implements INetworkServer {
 		
 		for (Client client : clients) {
 			System.out.println(client.getAddress());
+			// "Can't assign requested address" on the next line, don't know why
 			network.send(message, client.getAddress(),client.getPort());
 		}
 	}
