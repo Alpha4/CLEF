@@ -37,6 +37,7 @@ public class SimpleGUI implements IGUI {
 	private JTextField chatLine;
 	private JLabel statusBar;
 	private JTextField ipField;
+	private JTextField portField;
 	private JTextField pseudoField;
 	private JRadioButton hostOption;
 	private JRadioButton guestOption;
@@ -47,6 +48,7 @@ public class SimpleGUI implements IGUI {
 	// Connection info
 	private String hostIP;
 	private int connectionStatus;
+	private int port;
 	private boolean isHost;
 	private String pseudo;
 
@@ -58,6 +60,7 @@ public class SimpleGUI implements IGUI {
 
 		//inetwork = (INetworkClient) Framework.get(INetworkClient.class);
 		hostIP = "localhost";
+		port = 1234;
 		connectionStatus = DISCONNECTED;
 		isHost = true;
 		pseudo = "pseudo";
@@ -74,7 +77,7 @@ public class SimpleGUI implements IGUI {
 		ActionAdapter buttonListener = null;
 
 		// Create an options pane
-		JPanel optionsPane = new JPanel(new GridLayout(4, 1));
+		JPanel optionsPane = new JPanel(new GridLayout(5, 1));
 
 		// Pseudo input
 		pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -90,6 +93,13 @@ public class SimpleGUI implements IGUI {
 		ipField = new JTextField(15); ipField.setText(hostIP);
 		ipField.setEditable(true);
 		pane.add(ipField);
+		optionsPane.add(pane);
+		
+		pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		pane.add(new JLabel("Port:"));
+		portField = new JTextField(10); portField.setEditable(true);
+		portField.setText((new Integer(port)).toString());
+		pane.add(portField);
 		optionsPane.add(pane);
 		
 		// Host/guest option
@@ -194,6 +204,14 @@ public class SimpleGUI implements IGUI {
 		return optionsPane;
 	}
 	
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 	/**
 	 * Initialisation du GUI complet
 	 */
