@@ -2,8 +2,8 @@
 	"name": "CLEF",
 	"description": "Truc",
 	"extensions": [
-		"extensions.networkClient.NetworkClient",
-		"extensions.network.Network",
-		"extensions.message.Message"
+		"extensions.monitoring.Monitoring",
+		"extensions.app.App",
+		"extensions.test.Test"
 	]
 }

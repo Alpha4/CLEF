@@ -9,6 +9,7 @@ public class Config {
 	String description;
 	String type;
 	boolean autorun;
+	boolean killable;
 	List<String> extensions = new ArrayList<String>();
 	
 	public String getName() {
@@ -46,5 +47,10 @@ public class Config {
 	public void setAutorun(boolean autorun) {
 		this.autorun = autorun;
 	}
-	
+	public boolean isKillable() {
+		return this.killable;
+	}
+	public void setKillable(boolean killable) {
+		this.killable = killable;
+	}
 }

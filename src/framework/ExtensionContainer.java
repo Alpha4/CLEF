@@ -1,6 +1,9 @@
 package framework;
 
-public class ExtensionContainer {
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+public class ExtensionContainer implements InvocationHandler {
 
 	Config meta;
 	IExtension extension;
@@ -11,48 +14,85 @@ public class ExtensionContainer {
 		super();
 		this.extensionClass = extensionClass;
 		this.meta = meta;
-		this.status = "Not loaded";
+		this.status = Status.NOT_LOADED;
 	}
 	
-	public Config getMeta() {
+	/*private Config getMeta() {
 		return meta;
-	}
+	}*/
 	
-	public String getStatus(){
+	private String getStatus(){
 		return this.status;
 	}
 	
-	public void setMeta(Config meta) {
+	/*private void setMeta(Config meta) {
 		this.meta = meta;
-	}
+	}*/
 	
-	public IExtension getExtension() {
+	private IExtension getExtension() {
 		if (extension == null) {
-			try {
-				this.status = "Loaded";
-				return (IExtension) extensionClass.newInstance();
-			} catch (Exception e) {
-				e.printStackTrace();
-				this.status = "Error while loading";
-			}
+			this.load();
 		}
 		return extension;
 	}
 	
-	public void setExtension(IExtension extension) {
+	/*private void setExtension(IExtension extension) {
 		this.extension = extension;
 	}
 	
-	public void setExtensionClass(Class<?> extensionClass) {
+	private void setExtensionClass(Class<?> extensionClass) {
 		this.extensionClass = extensionClass;
 	}
 	
-	public Class<?> getExtensionClass() {
+	private Class<?> getExtensionClass() {
 		return this.extensionClass;
-	}
+	}*/
 	
 	public String toString() {
 		return "[Container: "+this.meta+"]";
 	}
 	
+	private void load() {
+		try {
+			this.status = Status.LOADED;
+			this.extension = (IExtension) extensionClass.newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.status = Status.ERROR;
+		}
+	}
+	
+	private void kill() {
+		this.extension = null;
+		this.status = Status.KILLED;
+	}
+
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		
+		if (method.getName() == "load") {
+			this.load();
+			return null;
+		}
+		
+		if (method.getName() == "kill") {
+			this.kill();
+			return null;
+		}
+		
+		if (method.getName() == "getStatus") {
+			return this.getStatus();
+		}
+		
+		if (method.getName() == "getDescription") {
+			return this.meta.getDescription();
+		}
+		
+		if (this.status == Status.KILLED || 
+			this.status == Status.ERROR)  {
+			throw new KilledExtensionException();
+		}
+		
+		return method.invoke(this.getExtension(), args);
+	}
 }

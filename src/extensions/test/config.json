@@ -1,5 +1,6 @@
 {
 	"name": "Test",
 	"type": "IAffichage",
-	"autorun": false
+	"autorun": false,
+	"killable": false
 }

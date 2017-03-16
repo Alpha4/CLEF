@@ -1,7 +1,9 @@
 package framework;
 
 import java.io.FileReader;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +13,13 @@ import com.google.gson.*;
 
 public class Framework {
 
-	public static Map<Class<?>,Map<Class<?>,ExtensionContainer>> extensions;
-	private static List<ExtensionContainer> autorunExtensions;
+	public static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
+	private static List<IExtension> autorunExtensions;
 
 	public static void main(String[] args) throws Exception {
 		
-		Framework.autorunExtensions = new ArrayList<ExtensionContainer>();
-		Framework.extensions = new HashMap<Class<?>, Map<Class<?>, ExtensionContainer>>();
+		Framework.autorunExtensions = new ArrayList<IExtension>();
+		Framework.extensions = new HashMap<Class<?>, Map<Class<?>, IExtension>>();
 
 		/* 1- Load config */
 		Config config = Framework.loadConfig(null);
@@ -43,18 +45,18 @@ public class Framework {
 				// Get plugin class
 				Class<?> plugClass = Class.forName(classpath);
 				
-				// Create ExtensionContainer
-				ExtensionContainer container = new ExtensionContainer(plugClass, config);
+				// Create Extension
+				IExtension extension = Framework.createExtension(plugClass, config);
 				
 				if (config.isAutorun()) {
-					autorunExtensions.add(container);
+					autorunExtensions.add(extension);
 				}
 				
 				if (extensions.get(plugInterface) == null) {
-					extensions.put(plugInterface, new HashMap<Class<?>,ExtensionContainer>());
+					extensions.put(plugInterface, new HashMap<Class<?>,IExtension>());
 				}
 				
-				extensions.get(plugInterface).put(plugClass, container);
+				extensions.get(plugInterface).put(plugClass, extension);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -64,35 +66,31 @@ public class Framework {
 	
 	private static void executeAutorunExtensions() {
 		
-		for(ExtensionContainer container : Framework.autorunExtensions) {
-			container.getExtension().run();
+		for(IExtension extension : Framework.autorunExtensions) {
+			extension.run();
 		}
 		
 	}
 	
-	public static IExtension getExtension(Class<?> cl) {
-		return Framework.getExtension(cl,0);
+	public static IExtension getExtension(Class<?> cl){
+		return Framework.get(cl).get(0);
 	}
 	
-	public static IExtension getExtension(Class<?> cl, int i) {
-		return Framework.get(cl).get(i).getExtension();
-	}
-	
-	public static List<ExtensionContainer> get(Class<?> cl) {
-		List<ExtensionContainer> containers = new ArrayList<ExtensionContainer>();
+	public static List<IExtension> get(Class<?> cl) {
+		List<IExtension> extensions = new ArrayList<IExtension>();
 		
-		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
-			containers.add(container.getValue());
+		for(Entry<Class<?>, IExtension> extension : Framework.extensions.get(cl).entrySet()) {
+			extensions.add(extension.getValue());
 		}
 		
-		return containers;
+		return extensions;
 	}
 	
 	public static IExtension get(Class<?> cl, Class<?> cl2) {
 		
-		for(Entry<Class<?>, ExtensionContainer> container : extensions.get(cl).entrySet()) {
-			if (container.getValue().getExtensionClass() == cl2) {
-				return container.getValue().getExtension();
+		for(Entry<Class<?>, IExtension> extension : Framework.extensions.get(cl).entrySet()) {
+			if (extension.getValue().getClass() == cl2) {
+				return extension.getValue();
 			}
 		}
 		
@@ -119,6 +117,16 @@ public class Framework {
 		}
 		
 		return config;
+	}
+	
+	private static IExtension createExtension(Class<?> cl, Config conf) {
+		
+		Class<?>[] interfaces = cl.getInterfaces();
+		interfaces = Arrays.copyOf(interfaces, interfaces.length+1);
+		interfaces[interfaces.length-1] = ExtensionActions.class;
+		IExtension ext = (IExtension) Proxy.newProxyInstance(cl.getClassLoader(), interfaces, new ExtensionContainer(cl, conf));
+		
+		return ext;
 	}
 
 }

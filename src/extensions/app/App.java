@@ -3,8 +3,9 @@ package extensions.app;
 import java.util.List;
 import java.util.Map.Entry;
 
-import framework.ExtensionContainer;
 import framework.Framework;
+import framework.IExtension;
+import framework.ExtensionActions;
 import framework.plugin.IApp;
 import framework.plugin.IMonitoring;
 import framework.plugin.IAffichage;
@@ -22,14 +23,16 @@ public class App implements IApp {
 		}
 		
 		// Print string
-		String str = "salut!";
-		List<ExtensionContainer> tests = Framework.get(IAffichage.class);
-		IAffichage test = (IAffichage) tests.get(0).getExtension();
-		test.print(str);
+		List<IExtension> tests = Framework.get(IAffichage.class);
+		IAffichage test = (IAffichage) tests.get(0);
+		test.print("salut!");
 		
 		// Show status again
 		for(Entry<Class<?>,String> status : monitor.getExtensionsStatus().entrySet()) {
 			System.out.println(status.getKey().getName()+": "+status.getValue());
 		}
+		
+		/*((ExtensionActions)test).kill();
+		test.print("Yo!");*/
 	}
 }
