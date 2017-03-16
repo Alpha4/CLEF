@@ -1,0 +1,5 @@
+{
+	"name": "MonitorGUI",
+	"type": "IMonitorGUI",
+	"autorun": false
+}
