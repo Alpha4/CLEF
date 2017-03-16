@@ -17,6 +17,8 @@ public class App implements IApp {
 		// Get monitoring
 		IMonitoring monitor = (IMonitoring) Framework.getExtension(IMonitoring.class);
 		
+		System.out.println(((ExtensionActions)monitor).getDescription());
+		
 		// Show status
 		for(Entry<Class<?>,String> status : monitor.getExtensionsStatus().entrySet()) {
 			System.out.println(status.getKey().getName()+": "+status.getValue());

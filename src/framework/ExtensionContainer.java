@@ -17,17 +17,9 @@ public class ExtensionContainer implements InvocationHandler {
 		this.status = Status.NOT_LOADED;
 	}
 	
-	/*private Config getMeta() {
-		return meta;
-	}*/
-	
 	private String getStatus(){
 		return this.status;
 	}
-	
-	/*private void setMeta(Config meta) {
-		this.meta = meta;
-	}*/
 	
 	private IExtension getExtension() {
 		if (extension == null) {
@@ -35,18 +27,6 @@ public class ExtensionContainer implements InvocationHandler {
 		}
 		return extension;
 	}
-	
-	/*private void setExtension(IExtension extension) {
-		this.extension = extension;
-	}
-	
-	private void setExtensionClass(Class<?> extensionClass) {
-		this.extensionClass = extensionClass;
-	}
-	
-	private Class<?> getExtensionClass() {
-		return this.extensionClass;
-	}*/
 	
 	public String toString() {
 		return "[Container: "+this.meta+"]";
