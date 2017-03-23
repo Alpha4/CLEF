@@ -89,14 +89,13 @@ public class MonitorGUI extends JPanel
         	if (e.getActionCommand().equals("Load")) {
         		
         		int index = table.getSelectedRow();
-        		//monitor.load(tableMap.get(index))        		
+        		monitor.loadExtension(tableMap.get(index));	
         	}
         	
         	if (e.getActionCommand().equals("Kill")) {
         		
         		int index = table.getSelectedRow();
-        		//monitor.kill(tableMap.get(index));
-        		extensionsMap = monitor.getExtensionsStatus();
+        		monitor.killExtension(tableMap.get(index));
         	}
         	
         	if (e.getActionCommand().equals("Refresh")) {
