@@ -130,7 +130,7 @@ public class SimpleGUI implements IGUI {
 					ipField.setEnabled(false);
 					pseudoField.setEnabled(false);
 					
-					inetwork.setServer(ipField.toString());
+					inetwork.setServer(ipField.getText());
 					
 					connectionStatus = BEGIN_CONNECT;
 

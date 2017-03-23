@@ -54,9 +54,6 @@ public class NetworkClient implements INetworkClient {
 	@Override
 	public void run() {
 		
-		setServer("localhost");
-		
-		send("SALUT!");
 		
 		/*while(true) {
 			try {
