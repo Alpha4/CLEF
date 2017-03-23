@@ -23,7 +23,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import framework.plugin.IGUI;
-import framework.plugin.IMessage;
 import framework.plugin.INetworkClient;
 
 public class SimpleGUI implements IGUI {
@@ -272,16 +271,16 @@ public class SimpleGUI implements IGUI {
 
 	}
 
-	public void receiveMessage(IMessage m) {
+	public void receiveMessage(String message) {
 
-		String author = m.getAuthor();
+		/*String author = m.getAuthor();
 		String text = m.getPlainText();
-
+*/
 		String chat = chatText.getText();
-		String message = author +  " : " + text;
+		//String message = author +  " : " + text;
 		String newChat = chat + "\n" + message;
 
-		chatText.setText(newChat);
+		chatText.setText(message);
 		mainFrame.repaint();
 
 	}

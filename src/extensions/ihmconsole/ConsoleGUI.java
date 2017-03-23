@@ -1,7 +1,7 @@
 package extensions.ihmconsole;
 
+import framework.Framework;
 import framework.plugin.IGUI;
-import framework.plugin.IMessage;
 import framework.plugin.INetworkClient;
 
 public class ConsoleGUI implements IGUI{
@@ -27,7 +27,7 @@ public class ConsoleGUI implements IGUI{
 	}
 
 	@Override
-	public void receiveMessage(IMessage m) {
+	public void receiveMessage(String m) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -49,11 +49,14 @@ public class ConsoleGUI implements IGUI{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 	@Override
 	public void initGUI() {
-		System.out.println("Bienvenue sur CLEF, une application extensible");
+		inetwork = (INetworkClient) Framework.getExtension(INetworkClient.class);
 		
+		System.out.println("Bienvenue sur CLEF, une application extensible");
 		
 	}
 

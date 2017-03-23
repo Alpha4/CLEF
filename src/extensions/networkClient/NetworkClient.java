@@ -1,83 +1,71 @@
 package extensions.networkClient;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
-
-import extensions.message.Message;
-import extensions.network.Network;
-import framework.plugin.IMessage;
-import framework.plugin.INetwork;
+import java.util.Scanner;
 import framework.plugin.INetworkClient;
 
 public class NetworkClient implements INetworkClient {
 	
-	// Appeler le Framework.getExtension("INetwork")
-	private INetwork network = Network.getInstance();
-	private String clientName;
-	private InetAddress server;
-	private int serverPort;
-	private IMessage m = null;
-	// Appeler le Framework.getExtension("IGUI")
-	//private IGUI gui = new SimpleGUI(); 
+	public static final int PORT = 1337;
+	
+	private Socket socket;
+	private Scanner input;
+	private PrintWriter output;
+	
+	public NetworkClient() throws IOException {
+		
+	}
 
 	public void send(String message) {
-		// Appeler le Framework.getExtension("IMessage")
-		IMessage m = new Message();
-		m.setAddress(server);
-		m.setAuthor(clientName);
-		m.setPlainText(message);
-		network.send(m, server, serverPort);
+		output.println(message);
+	}
+	
+	public String read() throws IOException {
+		return input.nextLine();
 	}
 
+	@Override
 	public String getClientName() {
-		return clientName;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	@Override
 	public void setClientName(String clientName) {
-		this.clientName = clientName;
-	}
-
-	public InetAddress getServer() {
-		return server;
+		// TODO Auto-generated method stub
+		
 	}
 
 	public void setServer(String server) {
 		try {
-			this.server = InetAddress.getByName(server);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void setServerPort( int port) {
-		this.serverPort = port;
-	}
-
-	private void receive() {
-		try {
-			m = network.receive();
+			socket = new Socket(server,PORT);
+			input = new Scanner(new InputStreamReader(socket.getInputStream()));
+			output = new PrintWriter(socket.getOutputStream(),true);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	@Override
 	public void run() {
-		Thread t = new Thread() {
-			public void run () {
-				while(true) {
-					receive();
-					//gui.receiveMessage(m);
-					System.out.println(m.getPlainText());
-				}
-			}
-		};
-		t.start();
 		
 		setServer("localhost");
-		setServerPort(51839);
-		setClientName("Toto");
-		send("Salut! Comment ça va?");
+		
+		send("SALUT!");
+		
+		while(true) {
+			try {
+				System.out.println(read());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
+	
 }

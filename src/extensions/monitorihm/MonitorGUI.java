@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -14,24 +16,24 @@ import javax.swing.table.DefaultTableModel;
 import extensions.monitoring.Monitoring;
 import framework.ExtensionContainer;
 import framework.Framework;
+import framework.plugin.IMonitorGUI;
 import framework.plugin.IMonitoring;
 
  
 
 public class MonitorGUI extends JPanel
-                      implements TableModelListener {
+                      implements TableModelListener, IMonitorGUI {
     private JList list; 
 
-    private JButton fireButton;
-    private JTextField employeeName;
-    
     private JTable table;
     private DefaultTableModel model;
+    private JScrollPane listScrollPane;
     
     private JButton loadPluginButton;
 	private JButton killPluginButton;
+	private JButton RefreshButton;
 	
-	private Monitoring monitor;
+	private IMonitoring monitor;
 	private Map<Class<?>,String> extensionsMap;
 	private Map<Integer,Class<?>> tableMap;
 	
@@ -39,35 +41,19 @@ public class MonitorGUI extends JPanel
     public MonitorGUI() {
         super(new BorderLayout());
          
-        // --------POUR ESSAYER------------:
-        
-        
-        String colNames[] = {"Plugin", "Status"};
-        Object[][] data = {{"SimpleGUI","Loaded"},{"Network","NotLoaded"},{"Message","Killed"},{"Client","Error"}};
-        
-      
-        //---------------------------------
-        
-        
-        //TODO : créer la table à afficher en fonction dex extensions et des status
-        // faire une fonction de mise à jour de la table à appeler après avoir appuyé sur les boutons;
-        // |-> getDataFromMapAndUpdate
-
-        tableMap = createMapTable();
-        //  Object[][] data = getDataFromMapAndUpdate(extensionsMap, tableMap);
-
-        model = new DefaultTableModel(data,colNames);
-        
-
-        
+        model = new DefaultTableModel();
         table = new JTable(model);
+        
+        monitor = (IMonitoring) Framework.getExtension(IMonitoring.class);
+        extensionsMap = monitor.getExtensionsStatus();
+        tableMap = createMapTable();    	
+        initTable();
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
         
 
-
-        JScrollPane listScrollPane = new JScrollPane(table);      
+        listScrollPane = new JScrollPane(table);      
         
- 
+        // Create buttons Load and Kill
         loadPluginButton = new JButton("Load");
         loadPluginButton.setActionCommand("Load");
         loadPluginButton.addActionListener(new ButtonListener());
@@ -75,6 +61,10 @@ public class MonitorGUI extends JPanel
         killPluginButton = new JButton("Kill");
         killPluginButton.setActionCommand("Kill");
         killPluginButton.addActionListener(new ButtonListener());
+        
+        RefreshButton = new JButton("Refresh");
+        RefreshButton.setActionCommand("Refresh");
+        RefreshButton.addActionListener(new ButtonListener());
  
  
         //Create a panel that uses BoxLayout.
@@ -84,6 +74,8 @@ public class MonitorGUI extends JPanel
         buttonPane.add(loadPluginButton);
         buttonPane.add(Box.createHorizontalStrut(5));
         buttonPane.add(killPluginButton);
+        buttonPane.add(Box.createHorizontalStrut(5));
+        buttonPane.add(RefreshButton);
         buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
  
         add(listScrollPane, BorderLayout.CENTER);
@@ -97,35 +89,54 @@ public class MonitorGUI extends JPanel
         	if (e.getActionCommand().equals("Load")) {
         		
         		int index = table.getSelectedRow();
-        		//monitor.load(tableMap.get(index));
-        		extensionsMap = monitor.getExtensionsStatus();
-        		
-        		
+        		monitor.loadExtension(tableMap.get(index));	
         	}
         	
         	if (e.getActionCommand().equals("Kill")) {
         		
         		int index = table.getSelectedRow();
-        		//monitor.kill(tableMap.get(index));
-        		extensionsMap = monitor.getExtensionsStatus();
+        		monitor.killExtension(tableMap.get(index));
+        	}
+        	
+        	if (e.getActionCommand().equals("Refresh")) {
+        		updateTable();
         	}
         	
         }
     }
- 
+    
+    
+ // fonction qui créé la tableMap pour associer les index des lignes à une classe
     private Map<Integer, Class<?>> createMapTable(){
     	
-        extensionsMap = monitor.getExtensionsStatus();
-        Map<Integer, Class<?>> map = new HashMap<Integer, Class<?>>();
+        Map<Integer, Class<?>> map = new TreeMap<Integer, Class<?>>();
         int i = 0;
         for (Class<?> cl : extensionsMap.keySet()) {
         	map.put(i, cl);
         	i++;
-        }
-        
+        }        
         return map;
     }
+    
+    private void initTable() {
+    	
+    	String colNames[] = {"Plugin", "Status"};
+    	
+    	Object[][] newData = {{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}};
+    	  	
+    	for(int index : tableMap.keySet()) {    		
+    		  Object[] kek = {tableMap.get(index).getName() , extensionsMap.get(tableMap.get(index)) };  		
+    		  newData[index]= kek;	   		
+    	}	 
+    	model.setDataVector(newData, colNames);
+    	model.fireTableDataChanged();
+    }
 
+    private void updateTable() {
+    	extensionsMap = monitor.getExtensionsStatus();
+        tableMap = createMapTable();    	
+        initTable();    	
+    }
  
     /**
      * Create the GUI and show it.  For thread safety,
@@ -148,16 +159,12 @@ public class MonitorGUI extends JPanel
         frame.pack(); // pour arranger la taille de la fenetre automatiquement.
         frame.setVisible(true);
     }
- 
-    public static void main(String[] args) {
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+    
+    
+    public void run() {
+    	createAndShowGUI();    	
     }
+ 
 
 	@Override
 	public void tableChanged(TableModelEvent e) {

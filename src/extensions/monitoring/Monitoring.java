@@ -27,11 +27,23 @@ public class Monitoring implements IMonitoring {
 		return res;
 	}
 	
-	public void load(IExtension extension) {
-		((ExtensionActions)extension).load();
+	public void loadExtension(Class<?> cl) {
+		for(Map<Class<?>,IExtension> extensions : this.extensions.values()) {
+			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()){
+				if (extension.getKey().equals(cl)) {
+					((ExtensionActions)extension.getValue()).load();
+				}
+			}
+		}
 	}
 
-	public void kill(IExtension extension) {
-		((ExtensionActions)extension).kill();
+	public void killExtension(Class<?> cl) {
+		for(Map<Class<?>,IExtension> extensions : this.extensions.values()) {
+			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()){
+				if (extension.getKey().equals(cl)) {
+					((ExtensionActions)extension.getValue()).kill();
+				}
+			}
+		}
 	}
 }

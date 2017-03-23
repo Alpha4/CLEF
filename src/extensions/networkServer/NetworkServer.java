@@ -1,51 +1,126 @@
 package extensions.networkServer;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.*;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import extensions.network.Network;
-import framework.plugin.IMessage;
-import framework.plugin.INetwork;
 import framework.plugin.INetworkServer;
 
 public class NetworkServer implements INetworkServer {
-
-	private List<Client> clients;
 	
-	// Appeler le Framework.getExtension("INetwork")
-	private INetwork network = Network.getInstance();
+	public static final int PORT = 1337;
 	
-	public NetworkServer() {
-		clients = new ArrayList<Client>();
-	}
-
-	private void messageReceived(IMessage message) {
-		Client c = new Client(message.getPort(), message.getAddress());
-		
-		if (!clients.contains(c))
-			clients.add(c);
-		
-		for (Client client : clients) {
-			System.out.println(client.getAddress());
-			// "Can't assign requested address" on the next line, don't know why
-			network.send(message, client.getAddress(),client.getPort());
+	private ServerSocket serverSocket;
+	private List<ClientThread> clientThreads = new ArrayList<ClientThread>();
+	
+	public void connect(Socket socket) {
+		try {
+			clientThreads.add(new ClientThread(socket));
+		} catch(IOException e) {
+			System.out.println(e.getMessage());
 		}
 	}
-
-	public void run() {
-		System.out.println("Network Server lancé sur le port : "+((Network) network).getReceivePort());
-		while (true) {
-			IMessage message = null;
-			try {
-				message = network.receive();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	
+	public void disconnect(ClientThread client) {
+		Iterator<ClientThread> itr = clientThreads.iterator();
+		while(itr.hasNext()) {
+			if (itr.next().equals(client))
+				itr.remove();
+			break;
+		}
+	}
+	
+	public void broadcast(ClientThread activeClient, String message) {
+		for(ClientThread client: clientThreads) {
+			if (!client.equals(activeClient)) {
+				client.sendMessage(message);
 			}
-			messageReceived(message);
 		}
 	}
+	
+	public void run() {
+		try {
+			serverSocket = new ServerSocket(PORT);
+			System.out.println("Server is listening on "+PORT);
+			while (true) {
+				Socket socket = serverSocket.accept();
+				connect(socket);
+			}
+		} catch (IOException e) {
+			
+		} finally {
+			try {
+				if (serverSocket != null)
+					serverSocket.close();
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+	
+	private class ClientThread extends Thread {
+		
+		private Socket clientSocket;
+		private BufferedReader input;
+		private PrintWriter output;
+
+		public ClientThread(Socket socket) throws IOException {
+			this.clientSocket = socket;
+			input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			output = new PrintWriter(clientSocket.getOutputStream(),true);
+			start();
+		}
+		
+		public void readMessage(String message) {
+			broadcast(this, message);
+		}
+
+		public void sendMessage(String message) {
+			output.println(message);
+		}
+		
+		public void close() {
+			try {
+				if (input != null) {
+					input.close();
+				}
+				if (output != null) {
+					output.close();
+				}
+				if (clientSocket != null) {
+					clientSocket.close();
+				}
+				disconnect(this);
+			} catch(IOException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		
+		public void run() {
+			String message;
+			try {
+				while(true) {
+					message = input.readLine();
+					System.out.println(message);
+					if (message == null) {
+						System.out.println("close");
+						close();
+						break;
+					}
+					readMessage(message);
+				}
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			} finally {
+				close();
+			}
+		}
+		
+	}
+	
 }
