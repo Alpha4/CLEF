@@ -9,6 +9,7 @@ import framework.IExtension;
 import framework.plugin.IAffichage;
 import framework.plugin.IApp;
 import framework.plugin.IGUI;
+import framework.plugin.IMonitorGUI;
 import framework.plugin.IMonitoring;
 
 public class App implements IApp {
@@ -26,7 +27,7 @@ public class App implements IApp {
 		}
 		
 		//trying to load GUI
-		IGUI gui = (IGUI) Framework.getExtension(IGUI.class);
+		IMonitorGUI gui = (IMonitorGUI) Framework.getExtension(IMonitorGUI.class);
 		
 		
 		// Print string
