@@ -3,12 +3,14 @@ package extensions.app;
 import java.util.List;
 import java.util.Map.Entry;
 
+import framework.ExtensionActions;
 import framework.Framework;
 import framework.IExtension;
-import framework.ExtensionActions;
-import framework.plugin.IApp;
-import framework.plugin.IMonitoring;
 import framework.plugin.IAffichage;
+import framework.plugin.IApp;
+import framework.plugin.IGUI;
+import framework.plugin.IMonitorGUI;
+import framework.plugin.IMonitoring;
 
 public class App implements IApp {
 
@@ -23,6 +25,10 @@ public class App implements IApp {
 		for(Entry<Class<?>,String> status : monitor.getExtensionsStatus().entrySet()) {
 			System.out.println(status.getKey().getName()+": "+status.getValue());
 		}
+		
+		//trying to load GUI
+		IMonitorGUI gui = (IMonitorGUI) Framework.getExtension(IMonitorGUI.class);
+		
 		
 		// Print string
 		List<IExtension> tests = Framework.get(IAffichage.class);

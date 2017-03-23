@@ -79,7 +79,9 @@ public class Framework {
 	public static List<IExtension> get(Class<?> cl) {
 		List<IExtension> extensions = new ArrayList<IExtension>();
 		
-		for(Entry<Class<?>, IExtension> extension : Framework.extensions.get(cl).entrySet()) {
+		for(Entry<Class<?>, IExtension> extension : Framework.extensions
+				.get(cl)
+				.entrySet()) {
 			extensions.add(extension.getValue());
 		}
 		
