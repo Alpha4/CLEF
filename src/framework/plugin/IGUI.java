@@ -1,8 +1,8 @@
-package extensions.ihm;
+package framework.plugin;
 
-import framework.plugin.IMessage;
+import framework.IExtension;
 
-public interface IGUI {
+public interface IGUI extends IExtension{
 	
 		
 	void receiveMessage(IMessage m);
