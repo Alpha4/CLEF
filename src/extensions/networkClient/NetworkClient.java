@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 import framework.plugin.INetworkClient;
 
@@ -17,9 +18,7 @@ public class NetworkClient implements INetworkClient {
 	private PrintWriter output;
 	
 	public NetworkClient() throws IOException {
-		socket = new Socket("localhost",PORT);
-		input = new Scanner(new InputStreamReader(socket.getInputStream()));
-		output = new PrintWriter(socket.getOutputStream(),true);
+		
 	}
 
 	public void send(String message) {
@@ -42,25 +41,29 @@ public class NetworkClient implements INetworkClient {
 		
 	}
 
-	@Override
-	public InetAddress getServer() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void setServer(String server) {
-		// TODO Auto-generated method stub
-		
+		try {
+			socket = new Socket(server,PORT);
+			input = new Scanner(new InputStreamReader(socket.getInputStream()));
+			output = new PrintWriter(socket.getOutputStream(),true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void run() {
 		
+		setServer("localhost");
+		
 		send("SALUT!");
 		
 		while(true) {
-			
+			try {
+				System.out.println(read());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}
