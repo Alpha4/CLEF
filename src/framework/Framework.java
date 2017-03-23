@@ -67,7 +67,7 @@ public class Framework {
 	private static void executeAutorunExtensions() {
 		
 		for(IExtension extension : Framework.autorunExtensions) {
-			extension.run();
+			((ExtensionActions)extension).run();
 		}
 		
 	}

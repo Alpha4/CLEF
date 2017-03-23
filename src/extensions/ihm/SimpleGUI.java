@@ -524,7 +524,6 @@ public class SimpleGUI implements IGUI {
 		this.inetwork = inetwork;
 	}
 
-	@Override
 	public void run() {
 		this.initGUI();		
 	}

@@ -19,8 +19,6 @@ public class ConsoleGUI implements IGUI{
 	private INetworkClient inetwork;
 	
 	
-	
-	@Override
 	public void run() {
 		initGUI();
 		

@@ -9,10 +9,4 @@ public class Test implements IAffichage{
 		System.out.println(str);
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

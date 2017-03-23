@@ -24,16 +24,6 @@ Etat d'avancement:
 
 Fini
 
-### Network
-
-Description:
-
-Envoi et réception de messages.
-
-Etat d'avancement:
-
-Fini
-
 ### Network Server
 
 Description:
@@ -42,7 +32,7 @@ Chaque message reçu est envoyé à tous les clients connus.
 
 Etat d'avancement:
 
-Encore quelques fixes à faire
+Fini
 
 ### Network Client
 
@@ -52,4 +42,4 @@ Surcouche de Network pour envoyer et recevoir des messages.
 
 Etat d'avancement:
 
-Encore quelques fixes à faire
+Fini
