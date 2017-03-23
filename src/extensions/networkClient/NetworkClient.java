@@ -58,13 +58,13 @@ public class NetworkClient implements INetworkClient {
 		
 		send("SALUT!");
 		
-		while(true) {
+		/*while(true) {
 			try {
 				System.out.println(read());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 	}
 	

@@ -9,8 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -22,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import framework.Framework;
 import framework.plugin.IGUI;
 import framework.plugin.INetworkClient;
 
@@ -58,9 +58,9 @@ public class SimpleGUI implements IGUI {
 	// Constructeur
 	public SimpleGUI(){
 
-		//inetwork = (INetworkClient) Framework.get(INetworkClient.class);
+		inetwork = (INetworkClient) Framework.getExtension(INetworkClient.class);
 		hostIP = "localhost";
-		port = 1234;
+		port = 1337;
 		connectionStatus = DISCONNECTED;
 		isHost = true;
 		pseudo = "pseudo";
@@ -129,7 +129,9 @@ public class SimpleGUI implements IGUI {
 					guestOption.setEnabled(false);
 					ipField.setEnabled(false);
 					pseudoField.setEnabled(false);
-
+					
+					inetwork.setServer(ipField.toString());
+					
 					connectionStatus = BEGIN_CONNECT;
 
 					statusBar.setText("Online");
@@ -151,7 +153,7 @@ public class SimpleGUI implements IGUI {
 					disconnectButton.setEnabled(false);
 
 					connectionStatus = DISCONNECTED;
-
+					
 					chatLine.setText(""); 
 					chatLine.setEnabled(false);
 
@@ -300,6 +302,8 @@ public class SimpleGUI implements IGUI {
 			chatText.setText(newChat);
 
 			chatLine.setText("");
+			
+			inetwork.send(message);
 		}
 
 	}
