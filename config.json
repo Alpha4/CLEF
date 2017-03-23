@@ -3,6 +3,7 @@
 	"description": "Truc",
 	"extensions": [
 		"extensions.monitoring.Monitoring",
+		"extensions.monitorihm.MonitorGUI",
 		"extensions.app.App",
 		"extensions.test.Test"
 	]
