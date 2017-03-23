@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import framework.plugin.IGUI;
 import framework.plugin.IMessage;
 import framework.plugin.INetworkClient;
 
@@ -271,12 +272,6 @@ public class SimpleGUI implements IGUI {
 
 	}
 
-	public static void main(String args[]) {
-		SimpleGUI simple = new SimpleGUI();
-		simple.initGUI();
-	}
-
-
 	public void receiveMessage(IMessage m) {
 
 		String author = m.getAuthor();
@@ -524,6 +519,12 @@ public class SimpleGUI implements IGUI {
 
 	public void setInetwork(INetworkClient inetwork) {
 		this.inetwork = inetwork;
+	}
+
+	@Override
+	public void run() {
+		SimpleGUI simple = new SimpleGUI();
+		simple.initGUI();		
 	}
 
 

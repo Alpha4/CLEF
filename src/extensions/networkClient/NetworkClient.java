@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import extensions.ihm.IGUI;
-import extensions.ihm.SimpleGUI;
 import extensions.message.Message;
 import extensions.network.Network;
 import framework.plugin.IMessage;
