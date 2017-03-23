@@ -282,7 +282,7 @@ public class SimpleGUI implements IGUI {
 		//String message = author +  " : " + text;
 		String newChat = chat + "\n" + message;
 
-		chatText.setText(message);
+		chatText.setText(newChat);
 		mainFrame.repaint();
 
 	}
@@ -526,8 +526,7 @@ public class SimpleGUI implements IGUI {
 
 	@Override
 	public void run() {
-		SimpleGUI simple = new SimpleGUI();
-		simple.initGUI();		
+		this.initGUI();		
 	}
 
 

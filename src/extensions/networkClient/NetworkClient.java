@@ -7,6 +7,9 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+
+import framework.Framework;
+import framework.plugin.IGUI;
 import framework.plugin.INetworkClient;
 
 public class NetworkClient implements INetworkClient {
@@ -17,8 +20,10 @@ public class NetworkClient implements INetworkClient {
 	private Scanner input;
 	private PrintWriter output;
 	
+	private IGUI gui;
+	
 	public NetworkClient() throws IOException {
-		
+		gui = (IGUI) Framework.getExtension(IGUI.class);
 	}
 
 	public void send(String message) {
@@ -51,17 +56,22 @@ public class NetworkClient implements INetworkClient {
 		}
 	}
 
-	@Override
 	public void run() {
-		
-		
-		/*while(true) {
-			try {
-				System.out.println(read());
-			} catch (IOException e) {
-				e.printStackTrace();
+		Thread t = new Thread() {
+			public void run () {
+				while(true) {
+					if (input != null) {
+						try {
+							String message = read();
+							gui.receiveMessage(message);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}
-		}*/
+		};
+		t.start();
 		
 	}
 	
