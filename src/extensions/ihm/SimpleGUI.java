@@ -139,7 +139,6 @@ public class SimpleGUI implements IGUI {
 
 					mainFrame.repaint();
 
-
 				}
 				// Disconnect
 				if (e.getActionCommand().equals("disconnect")){
@@ -165,14 +164,7 @@ public class SimpleGUI implements IGUI {
 				if (e.getActionCommand().equals("send")){
 					sendMessage();
 					mainFrame.repaint();
-
-
-
-
 				}
-
-
-
 			}
 		};
 		
@@ -259,8 +251,6 @@ public class SimpleGUI implements IGUI {
 		mainPane.add(optionsPane, BorderLayout.WEST);
 		mainPane.add(chatPane, BorderLayout.CENTER);
 
-
-
 		// Set up the main frame
 		mainFrame = new JFrame("Amazing UDP Chat");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -275,11 +265,7 @@ public class SimpleGUI implements IGUI {
 
 	public void receiveMessage(String message) {
 
-		/*String author = m.getAuthor();
-		String text = m.getPlainText();
-*/
 		String chat = chatText.getText();
-		//String message = author +  " : " + text;
 		String newChat = chat + "\n" + message;
 
 		chatText.setText(newChat);
@@ -292,18 +278,14 @@ public class SimpleGUI implements IGUI {
 
 		String message = chatLine.getText();
 
-
 		if (!message.isEmpty()){
 
-			//inetwork.send(message);
 			String chat = chatText.getText();
-			String newChat = chat + "\n" + pseudo + " : " + message;
-
+			String newChat = chat + "\n" + pseudo + " : " + message;			
+			String newMessage = pseudo + " : " + message;
 			chatText.setText(newChat);
-
-			chatLine.setText("");
-			
-			inetwork.send(message);
+			chatLine.setText("");			
+			inetwork.send(newMessage);
 		}
 
 	}
