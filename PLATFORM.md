@@ -50,4 +50,4 @@ Chaque plugin possède un fichier `config.json` ayant le format suivant:
 
 ## Etat d'avancement
 
-FINI
+Implementer la gestion des events (Observer/Observable?)

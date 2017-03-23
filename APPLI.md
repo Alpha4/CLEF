@@ -10,9 +10,9 @@ Interface graphique simple
 
 Etat d'avancement:
 
-IHM fonctionnelle, reste à lier au framework. Elle est théoriquement compatible, il reste plus qu'à décommenter et tester
+Fini les fonctions de bases.
 
-Déjà compatible avec les autres plugins (théoriquement)
+Reste à ajouter le choix de port, le choix guest/host et les actions disconnect
 
 ### Monitoring
 
@@ -32,7 +32,7 @@ Chaque message reçu est envoyé à tous les clients connus.
 
 Etat d'avancement:
 
-Fini
+Fini. Ajouter le choix du port
 
 ### Network Client
 
@@ -42,4 +42,14 @@ Surcouche de Network pour envoyer et recevoir des messages.
 
 Etat d'avancement:
 
-Fini
+Fini. Ajouter le choix du port
+
+### IHM Console
+
+Description:
+
+Interface du chat dans la console java.
+
+Etat d'avancement:
+
+0.01%
