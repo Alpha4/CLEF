@@ -512,12 +512,16 @@ public class SimpleGUI implements IGUI {
 
 	@Override
 	public void run() {
-		this.initGUI();		
+		this.initGUI();
+		Framework.handleEvent("message.received", this);
 	}
 
 	@Override
 	public void handleEvent(String name, Object event) {
-		// TODO Auto-generated method stub
+		
+		if (name == "message.received") {
+			this.receiveMessage((String)event);
+		}
 		
 	}
 
