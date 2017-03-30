@@ -29,24 +29,6 @@ public class ConsoleGUI implements IGUI{
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void receiveRoomList() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void connectedToServResponse() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void disconnectedFromServer() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	
 

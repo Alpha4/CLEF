@@ -209,6 +209,7 @@ public class SimpleGUI implements IGUI {
 	/**
 	 * Initialisation du GUI complet
 	 */
+	@Override
 	public void initGUI() {
 		// Set up the status bar
 		statusBar = new JLabel();
@@ -263,6 +264,7 @@ public class SimpleGUI implements IGUI {
 
 	}
 
+	@Override
 	public void receiveMessage(String message) {
 
 		String chat = chatText.getText();
@@ -287,24 +289,6 @@ public class SimpleGUI implements IGUI {
 			chatLine.setText("");			
 			inetwork.send(newMessage);
 		}
-
-	}
-
-	@Override
-	public void receiveRoomList() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void connectedToServResponse() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void disconnectedFromServer() {
-		// TODO Auto-generated method stub
 
 	}
 
