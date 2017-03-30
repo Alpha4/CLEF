@@ -17,6 +17,8 @@ public class Framework {
 	private static List<IExtension> autorunExtensions;
 	
 	private static Map<String,List<IExtension>> eventHandlers;
+	
+	private static Config config;
 
 	public static void main(String[] args) throws Exception {
 		
@@ -26,7 +28,7 @@ public class Framework {
 		Framework.eventHandlers = new HashMap<String, List<IExtension>>();
 
 		/* 1- Load config */
-		Config config = Framework.loadConfig(null);
+		config = Framework.loadConfig(null);
 		
 		/* 2- Load dependencies */
 		Framework.loadDependencies(config);
@@ -34,6 +36,10 @@ public class Framework {
 		/* 3- Execute autorun extensions */
 		Framework.executeAutorunExtensions();
 		
+	}
+	
+	public static Config getConfig() {
+		return Framework.config;
 	}
 	
 	private static void loadDependencies(Config frameworkConfig) {

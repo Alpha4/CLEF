@@ -91,7 +91,7 @@ public class NetworkClient implements INetworkClient {
 		
 	}
 	
-	public void stopThread() {
+	public void stopClient() {
 		try {
 			socket.close();
 		} catch (IOException e) {

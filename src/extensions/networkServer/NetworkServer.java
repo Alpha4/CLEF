@@ -51,7 +51,7 @@ public class NetworkServer implements INetworkServer {
 		return this.port;
 	}
 	
-	public void stopThread() {
+	public void stopServer() {
 		try {
 			serverSocket.close();
 		} catch (IOException e) {

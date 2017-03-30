@@ -9,8 +9,14 @@ public interface INetworkServer extends IExtension {
 *methode appelée lors du lancement du serveur
 */
 	void run();
-
+/**
+ * définir le port du serveur
+ * @param port
+ */
 	void setPort(int port);
-	public void stopThread();
+/**
+ * méthode qui ferme le server socket
+ */
+	public void stopServer();
 
 }
