@@ -75,5 +75,11 @@ public class NetworkClient implements INetworkClient {
 		t.start();
 		
 	}
+
+	@Override
+	public void handleEvent(String name, Object event) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

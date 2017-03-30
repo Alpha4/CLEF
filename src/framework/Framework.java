@@ -15,11 +15,15 @@ public class Framework {
 
 	public static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
 	private static List<IExtension> autorunExtensions;
+	
+	private static Map<String,List<IExtension>> eventHandlers;
 
 	public static void main(String[] args) throws Exception {
 		
 		Framework.autorunExtensions = new ArrayList<IExtension>();
 		Framework.extensions = new HashMap<Class<?>, Map<Class<?>, IExtension>>();
+		
+		Framework.eventHandlers = new HashMap<String, List<IExtension>>();
 
 		/* 1- Load config */
 		Config config = Framework.loadConfig(null);
@@ -129,6 +133,20 @@ public class Framework {
 		IExtension ext = (IExtension) Proxy.newProxyInstance(cl.getClassLoader(), interfaces, new ExtensionContainer(cl, conf));
 		
 		return ext;
+	}
+	
+	public static void event(String name, Object event) {
+		List<IExtension> handlers = Framework.eventHandlers.get(name);
+		for (IExtension handler : handlers) {
+			handler.handleEvent(name, event);
+		}
+	}
+	
+	public static void handleEvent(String name, IExtension handler) {
+		if (!Framework.eventHandlers.containsKey(name)) {
+			Framework.eventHandlers.put(name, new ArrayList<IExtension>());
+		}
+		Framework.eventHandlers.get(name).add(handler);
 	}
 
 }

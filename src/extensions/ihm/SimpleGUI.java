@@ -495,6 +495,12 @@ public class SimpleGUI implements IGUI {
 		this.initGUI();		
 	}
 
+	@Override
+	public void handleEvent(String name, Object event) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 

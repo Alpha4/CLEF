@@ -47,4 +47,10 @@ public class Monitoring implements IMonitoring {
 			}
 		}
 	}
+
+	@Override
+	public void handleEvent(String name, Object event) {
+		// TODO Auto-generated method stub
+		
+	}
 }
