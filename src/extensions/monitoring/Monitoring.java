@@ -13,6 +13,7 @@ public class Monitoring implements IMonitoring {
 	
 	private static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
 
+	@Override
 	public void run() {
 		extensions = Framework.extensions;
 	}

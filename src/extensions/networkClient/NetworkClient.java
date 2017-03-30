@@ -56,6 +56,7 @@ public class NetworkClient implements INetworkClient {
 		}
 	}
 
+	@Override
 	public void run() {
 		Thread t = new Thread() {
 			public void run () {
