@@ -27,12 +27,12 @@ import framework.plugin.INetworkClient;
 import framework.plugin.INetworkServer;
 
 public class SimpleGUI implements IGUI {
-	// Connect status constants
+	// Constantes d'informations de connection
 	final static int DISCONNECTED = 0;
 	final static int BEGIN_CONNECT = 1;
 	final static int CONNECTED = 2;
 
-	// Various GUI components and info
+	// Informations et composants de la GUI
 	private JFrame mainFrame;
 	private JTextArea chatText;
 	private JTextField chatLine;
@@ -46,13 +46,14 @@ public class SimpleGUI implements IGUI {
 	private JButton disconnectButton;
 	private JButton sendButton;
 
-	// Connection info
+	// Informations de connection
 	private String hostIP;
 	private int connectionStatus;
 	private int port;
 	private boolean isHost;
 	private String pseudo;
 
+	// Client et Server
 	private INetworkClient inetwork;
 	private INetworkServer iserver;
 
@@ -62,14 +63,14 @@ public class SimpleGUI implements IGUI {
 
 		hostIP = "localhost";
 		port = 1337;
-		connectionStatus = DISCONNECTED;
-		isHost = true;
+		setConnectionStatus(DISCONNECTED);
+		setHost(true);
 		pseudo = "pseudo";
 
 	}
 
 	/**
-	 * Generation du panneau de gauche (infos) 
+	 * Generation du panneau de gauche (infos/options) 
 	 * @return un JPanel
 	 */
 	private JPanel initOptionsPane() {
@@ -77,10 +78,10 @@ public class SimpleGUI implements IGUI {
 		JPanel pane = null;
 		ActionAdapter buttonListener = null;
 
-		// Create an options pane
+		// Création du panneau d'options
 		JPanel optionsPane = new JPanel(new GridLayout(5, 1));
 
-		// Pseudo input
+		// Pour le pseudo
 		pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pane.add(new JLabel("Pseudo:"));
 		pseudoField = new JTextField(15); pseudoField.setText(pseudo);
@@ -88,7 +89,7 @@ public class SimpleGUI implements IGUI {
 		pane.add(pseudoField);
 		optionsPane.add(pane);   
 
-		// IP address input
+		// Pour l'adresse IP
 		pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pane.add(new JLabel("Host IP:"));
 		ipField = new JTextField(15); ipField.setText(hostIP);
@@ -96,6 +97,7 @@ public class SimpleGUI implements IGUI {
 		pane.add(ipField);
 		optionsPane.add(pane);
 		
+		// Pour le port
 		pane = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pane.add(new JLabel("Port:"));
 		portField = new JTextField(10); portField.setEditable(true);
@@ -103,7 +105,7 @@ public class SimpleGUI implements IGUI {
 		pane.add(portField);
 		optionsPane.add(pane);
 		
-		// Host/guest option
+		// Host/guest options
 		ButtonGroup bg = new ButtonGroup();
 		hostOption = new JRadioButton("Host", true);
 		hostOption.setMnemonic(KeyEvent.VK_H);
@@ -116,23 +118,24 @@ public class SimpleGUI implements IGUI {
 		pane.add(guestOption);
 		optionsPane.add(pane); 
 
-		// Connect/disconnect buttons
+		// Connect/disconnect boutons
 		JPanel buttonPane = new JPanel(new GridLayout(1, 2));
+		
+		// Le Listener pour les boutons
 		buttonListener = new ActionAdapter() {
 			public void actionPerformed(ActionEvent e) {
-				// Request a connection initiation
+				// Quand le bouton "Connect" est pressé
 				if (e.getActionCommand().equals("connect")) {
 					
-					if (hostOption.isSelected() == true) {
-						
+					// Si le RadioButton Host est sélectionné, on paramètre le port du serveur.
+					if (hostOption.isSelected() == true) {						
 						iserver = (INetworkServer) Framework.getExtension(INetworkServer.class);
 						port = Integer.parseInt(portField.getText());
 						iserver.setPort(port);
-						iserver.run();
-
-						
+						iserver.run();						
 					}
 					
+					// Activation du chat / désactivation des options
 					chatLine.setEnabled(true);
 					sendButton.setEnabled(true);
 					disconnectButton.setEnabled(true);
@@ -142,11 +145,12 @@ public class SimpleGUI implements IGUI {
 					ipField.setEnabled(false);
 					pseudoField.setEnabled(false);
 					
+					// Paramétrage du Client
 					inetwork = (INetworkClient) Framework.getExtension(INetworkClient.class);
 					inetwork.setPort(port);
 					inetwork.setServer(ipField.getText());
 					
-					connectionStatus = BEGIN_CONNECT;
+					setConnectionStatus(BEGIN_CONNECT);
 
 					statusBar.setText("Online");
 					setPseudo(getPseudoField().getText());
@@ -155,14 +159,16 @@ public class SimpleGUI implements IGUI {
 					
 
 				}
-				// Disconnect
+				// Quand le bouton "Disconnect" est pressé
 				if (e.getActionCommand().equals("disconnect")){
-
+					
+					// Stop le server ou le client en focntion du RadioButton coché
 					if (hostOption.isSelected() == true) {
-						iserver.stopThread();						
+						iserver.stopServer();						
 					}else{
-						inetwork.stopThread();
+						inetwork.stopClient();
 					}
+					// Désactivation du chat / activation des options
 					connectButton.setEnabled(true);
 					ipField.setEnabled(true);
 					hostOption.setEnabled(true);
@@ -171,7 +177,7 @@ public class SimpleGUI implements IGUI {
 					sendButton.setEnabled(false);
 					disconnectButton.setEnabled(false);
 
-					connectionStatus = DISCONNECTED;
+					setConnectionStatus(DISCONNECTED);
 					
 					chatLine.setText(""); 
 					chatLine.setEnabled(false);
@@ -180,7 +186,8 @@ public class SimpleGUI implements IGUI {
 
 					mainFrame.repaint();
 				}
-
+				
+				// Si le bouton "Send" est pressé
 				if (e.getActionCommand().equals("send")){
 					sendMessage();
 					mainFrame.repaint();
@@ -188,28 +195,28 @@ public class SimpleGUI implements IGUI {
 			}
 		};
 		
-		//connection button
+		//"Connect" Bouton
 		connectButton = new JButton("Connect");
 		connectButton.setMnemonic(KeyEvent.VK_C);
 		connectButton.setActionCommand("connect");
 		connectButton.addActionListener(buttonListener);
 		connectButton.setEnabled(true);
 		
-		//disconnection button
+		//"Disconnect" Bouton
 		disconnectButton = new JButton("Disconnect");
 		disconnectButton.setMnemonic(KeyEvent.VK_D);
 		disconnectButton.setActionCommand("disconnect");
 		disconnectButton.addActionListener(buttonListener);
 		disconnectButton.setEnabled(false);
 		
-		//send button
+		//"Send" Bouton
 		sendButton = new JButton("Send");
 		sendButton.setMnemonic(KeyEvent.VK_ENTER);
 		sendButton.setActionCommand("send");
 		sendButton.addActionListener(buttonListener);
 		sendButton.setEnabled(false);
 		
-		//ajout des buttons au panel
+		//ajout des boutons au panel
 		buttonPane.add(connectButton);
 		buttonPane.add(disconnectButton);
 		buttonPane.add(sendButton);
@@ -218,10 +225,18 @@ public class SimpleGUI implements IGUI {
 		return optionsPane;
 	}
 	
+	/**
+	 * Retourne le port
+	 * @return port 
+	 */
 	public int getPort() {
 		return port;
 	}
 
+	/**
+	 * Défini le port
+	 * @param port
+	 */
 	public void setPort(int port) {
 		this.port = port;
 	}
@@ -229,16 +244,15 @@ public class SimpleGUI implements IGUI {
 	/**
 	 * Initialisation du GUI complet
 	 */
-	@Override
 	public void initGUI() {
-		// Set up the status bar
+		// Création de la barre de status
 		statusBar = new JLabel();
 		statusBar.setText("Offline");
 
-		// Set up the options pane
+		// On initialise le panneau des options
 		JPanel optionsPane = initOptionsPane();
 
-		// Set up the chat pane
+		// Création du panneau de chat
 		JPanel chatPane = new JPanel(new BorderLayout());
 		chatText = new JTextArea(10, 20);
 		chatText.setLineWrap(true);
@@ -263,28 +277,27 @@ public class SimpleGUI implements IGUI {
 				}
 			}
 		};
-
+		
+		// On ajoute le KeyListener à la chatLine
 		chatLine.addKeyListener(keyListener);
 
-		// Set up the main pane
+		// Création de la fenetre principale
 		JPanel mainPane = new JPanel(new BorderLayout());
 		mainPane.add(statusBar, BorderLayout.SOUTH);
 		mainPane.add(optionsPane, BorderLayout.WEST);
 		mainPane.add(chatPane, BorderLayout.CENTER);
-
-		// Set up the main frame
-		mainFrame = new JFrame("Amazing UDP Chat");
+		mainFrame = new JFrame("framewok.getConfig().getName()");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setContentPane(mainPane);
 		mainFrame.setSize(mainFrame.getPreferredSize());
 		mainFrame.setLocation(200, 200);
 		mainFrame.pack();
 		mainFrame.setVisible(true);
-
-
 	}
 
-	@Override
+	/**
+	 * Méthode appelée par les autres extensions pour informer qu'on a reçu un message
+	 */
 	public void receiveMessage(String message) {
 
 		String chat = chatText.getText();
@@ -295,7 +308,9 @@ public class SimpleGUI implements IGUI {
 
 	}
 
-
+	/**
+	 * Méthode envoyant un message, relegant le destinataire à NetworkClient
+	 */
 	public void sendMessage() {
 
 		String message = chatLine.getText();
@@ -312,220 +327,86 @@ public class SimpleGUI implements IGUI {
 
 	}
 
-
-
-	public JFrame getMainFrame() {
-		return mainFrame;
-	}
-
-
-
-	public void setMainFrame(JFrame mainFrame) {
-		this.mainFrame = mainFrame;
-	}
-
-
-
-	public JTextArea getChatText() {
-		return chatText;
-	}
-
-
-
-	public void setChatText(JTextArea chatText) {
-		this.chatText = chatText;
-	}
-
-
-
-	public JTextField getChatLine() {
-		return chatLine;
-	}
-
-
-
-	public void setChatLine(JTextField chatLine) {
-		this.chatLine = chatLine;
-	}
-
-
-
+	/**
+	 * Retourne la statusBar
+	 * @return JLabel statusBar
+	 */
 	public JLabel getStatusBar() {
 		return statusBar;
 	}
 
-
-
-	public void setStatusBar(JLabel statusBar) {
-		this.statusBar = statusBar;
-	}
-
-
-
-	public JTextField getIpField() {
-		return ipField;
-	}
-
-
-	public void setIpField(JTextField ipField) {
-		this.ipField = ipField;
-	}
-
-
+	/**
+	 * Retourne le champ du pseudo
+	 * @return JTextField pseudoField
+	 */
 	public JTextField getPseudoField() {
 		return pseudoField;
 	}
 
-
-
-	public void setPseudoField(JTextField pseudoField) {
-		this.pseudoField = pseudoField;
-	}
-
-
-
-	public JRadioButton getHostOption() {
-		return hostOption;
-	}
-
-
-
-	public void setHostOption(JRadioButton hostOption) {
-		this.hostOption = hostOption;
-	}
-
-
-
-	public JRadioButton getGuestOption() {
-		return guestOption;
-	}
-
-
-
-	public void setGuestOption(JRadioButton guestOption) {
-		this.guestOption = guestOption;
-	}
-
-
-
-	public JButton getConnectButton() {
-		return connectButton;
-	}
-
-
-
-	public void setConnectButton(JButton connectButton) {
-		this.connectButton = connectButton;
-	}
-
-
-
-	public JButton getDisconnectButton() {
-		return disconnectButton;
-	}
-
-
-
-	public void setDisconnectButton(JButton disconnectButton) {
-		this.disconnectButton = disconnectButton;
-	}
-
-
-
-	public JButton getSendButton() {
-		return sendButton;
-	}
-
-
-
-	public void setSendButton(JButton sendButton) {
-		this.sendButton = sendButton;
-	}
-
-
-
-	public String getHostIP() {
-		return hostIP;
-	}
-
-
-
+	/**
+	 * Défini l'IP
+	 * @param hostIP
+	 */
 	public void setHostIP(String hostIP) {
 		this.hostIP = hostIP;
-		/*try {
-			getInetwork().setServer(InetAddress.getByName(hostIP));
-		} catch (UnknownHostException e) {
-			getStatusBar().setText("Unknown host");
-			e.printStackTrace();
-		}*/
 	}
 
-
-
-
+	/**
+	 * Défini le pseudo
+	 * @param pseudo
+	 */
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
+	}
+	
+	/**
+	 * Retourne le status de la connexion
+	 * @return
+	 */
 	public int getConnectionStatus() {
 		return connectionStatus;
 	}
-
-
-
+	
+	/**
+	 *  Défini le status de la connexion
+	 * @param connectionStatus
+	 */
 	public void setConnectionStatus(int connectionStatus) {
 		this.connectionStatus = connectionStatus;
 	}
 
-
-
+	/**
+	 * Retourne le booléen indiquant si on est en mode "Host"
+	 * @return
+	 */
 	public boolean isHost() {
 		return isHost;
 	}
 
-
-
+	/**
+	 * Défini si on est en mode "Host" ou non, pour les radioButtons
+	 * @param isHost
+	 */
 	public void setHost(boolean isHost) {
 		this.isHost = isHost;
 	}
 
 
-
-	public String getPseudo() {
-		return pseudo;
-	}
-
-
-
-	public void setPseudo(String pseudo) {
-		this.pseudo = pseudo;
-		//getInetwork().setClientName(pseudo);
-	}
-
-
-
-	public INetworkClient getInetwork() {
-		return inetwork;
-	}
-
-
-
-	public void setInetwork(INetworkClient inetwork) {
-		this.inetwork = inetwork;
-	}
-
 	@Override
+	/**
+	 * Méthode a exécuter au lancement de l'extension
+	 */
 	public void run() {
 		this.initGUI();		
 	}
-
+	
 	@Override
 	public void handleEvent(String name, Object event) {
 		// TODO Auto-generated method stub
 		
 	}
 
-
-
-
 }
-
 
 
 // Action adapter for easy event-listener coding

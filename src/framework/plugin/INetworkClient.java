@@ -32,9 +32,18 @@ public interface INetworkClient extends IExtension {
 */
 	void run();
 	
-
+/**
+ * définir le port d'écoute du client
+ * @param port
+ */
 	void setPort(int port);
-	public void stopThread();
-
+/**
+ * méthode qui ferme le socket du Client
+ */
+	public void stopClient();
+/**
+ * Méthode retournant le port du Client.
+ * @return
+ */
 	int getPort();
 }
