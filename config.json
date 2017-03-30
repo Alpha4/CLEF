@@ -5,6 +5,7 @@
 		"extensions.monitoring.Monitoring",
 		"extensions.networkServer.NetworkServer",
 		"extensions.networkClient.NetworkClient",
-		"extensions.ihm.SimpleGUI"
+		"extensions.ihm.SimpleGUI",
+		"extensions.monitorihm.MonitorGUI"
 	]
 }
