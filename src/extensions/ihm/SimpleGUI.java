@@ -127,10 +127,11 @@ public class SimpleGUI implements IGUI {
 				// Quand le bouton "Connect" est pressé
 				if (e.getActionCommand().equals("connect")) {
 					
+					port = Integer.parseInt(portField.getText());
+					
 					// Si le RadioButton Host est sélectionné, on paramètre le port du serveur.
 					if (hostOption.isSelected() == true) {						
 						iserver = (INetworkServer) Framework.getExtension(INetworkServer.class);
-						port = Integer.parseInt(portField.getText());
 						iserver.setPort(port);
 						iserver.run();						
 					}
@@ -286,7 +287,7 @@ public class SimpleGUI implements IGUI {
 		mainPane.add(statusBar, BorderLayout.SOUTH);
 		mainPane.add(optionsPane, BorderLayout.WEST);
 		mainPane.add(chatPane, BorderLayout.CENTER);
-		mainFrame = new JFrame("framewok.getConfig().getName()");
+		mainFrame = new JFrame(Framework.getConfig().getName());
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setContentPane(mainPane);
 		mainFrame.setSize(mainFrame.getPreferredSize());
@@ -309,7 +310,7 @@ public class SimpleGUI implements IGUI {
 	}
 
 	/**
-	 * Méthode envoyant un message, relegant le destinataire à NetworkClient
+	 * Méthode envoyant un message, reléguant le destinataire à NetworkClient
 	 */
 	public void sendMessage() {
 
