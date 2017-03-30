@@ -19,8 +19,6 @@ import framework.Framework;
 import framework.plugin.IMonitorGUI;
 import framework.plugin.IMonitoring;
 
- 
-
 public class MonitorGUI extends JPanel
                       implements TableModelListener, IMonitorGUI {
     private JList list; 
@@ -41,15 +39,19 @@ public class MonitorGUI extends JPanel
     public MonitorGUI() {
         super(new BorderLayout());
          
+        // Initialisation du Modèle pour la table et de la Table
         model = new DefaultTableModel();
         table = new JTable(model);
         
+        // Récupération du Monitor grâce au Framework
         monitor = (IMonitoring) Framework.getExtension(IMonitoring.class);
+        // Récupération de l'état des extensions
         extensionsMap = monitor.getExtensionsStatus();
+        
+        // On initialise la Table
         tableMap = createMapTable();    	
         initTable();
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
-        
 
         listScrollPane = new JScrollPane(table);      
         
@@ -83,17 +85,16 @@ public class MonitorGUI extends JPanel
 
     }
  
+    // ButtonListener pour les différents boutons du moniteur
     class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {      	
         	
-        	if (e.getActionCommand().equals("Load")) {
-        		
+        	if (e.getActionCommand().equals("Load")) {        		
         		int index = table.getSelectedRow();
         		monitor.loadExtension(tableMap.get(index));	
         	}
         	
-        	if (e.getActionCommand().equals("Kill")) {
-        		
+        	if (e.getActionCommand().equals("Kill")) {        		
         		int index = table.getSelectedRow();
         		monitor.killExtension(tableMap.get(index));
         	}
@@ -103,10 +104,13 @@ public class MonitorGUI extends JPanel
         	}
         	
         }
-    }
+    }    
     
-    
- // fonction qui créé la tableMap pour associer les index des lignes à une classe
+ 
+    /**
+     * Méthode qui crée la tableMap pour associer les index des lignes à une classe.
+     * @return
+     */
     private Map<Integer, Class<?>> createMapTable(){
     	
         Map<Integer, Class<?>> map = new TreeMap<Integer, Class<?>>();
@@ -118,12 +122,12 @@ public class MonitorGUI extends JPanel
         return map;
     }
     
-    private void initTable() {
-    	
-    	String colNames[] = {"Plugin", "Status"};
-    	
-    	Object[][] newData = {{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}};
-    	  	
+    /**
+     * Méthode initialisant la Table des extensions.
+     */
+    private void initTable() {    	
+    	String colNames[] = {"Plugin", "Status"};    	
+    	Object[][] newData = {{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}};    	  	
     	for(int index : tableMap.keySet()) {    		
     		  Object[] kek = {tableMap.get(index).getName() , extensionsMap.get(tableMap.get(index)) };  		
     		  newData[index]= kek;	   		
@@ -132,6 +136,9 @@ public class MonitorGUI extends JPanel
     	model.fireTableDataChanged();
     }
 
+    /**
+     * Méthode de mise à jour de la Table des extensions.
+     */
     private void updateTable() {
     	extensionsMap = monitor.getExtensionsStatus();
         tableMap = createMapTable();    	
@@ -139,13 +146,11 @@ public class MonitorGUI extends JPanel
     }
  
     /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
+     * Création du GUI et affichage.
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("Montiteur d'extensions");
+        JFrame frame = new JFrame("Moniteur d'extensions");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        
  
