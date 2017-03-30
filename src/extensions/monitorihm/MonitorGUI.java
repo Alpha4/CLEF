@@ -160,7 +160,7 @@ public class MonitorGUI extends JPanel
         frame.setVisible(true);
     }
     
-    
+    @Override
     public void run() {
     	createAndShowGUI();    	
     }
