@@ -149,5 +149,11 @@ public class NetworkServer implements INetworkServer {
 		}
 		
 	}
+
+	@Override
+	public void handleEvent(String name, Object event) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

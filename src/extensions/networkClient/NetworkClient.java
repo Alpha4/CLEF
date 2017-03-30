@@ -86,6 +86,12 @@ public class NetworkClient implements INetworkClient {
 		thread.start();
 		
 	}
+
+	@Override
+	public void handleEvent(String name, Object event) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	public void stopThread() {
 		try {

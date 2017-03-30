@@ -29,24 +29,6 @@ public class ConsoleGUI implements IGUI{
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void receiveRoomList() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void connectedToServResponse() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void disconnectedFromServer() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	
 
@@ -55,6 +37,12 @@ public class ConsoleGUI implements IGUI{
 		inetwork = (INetworkClient) Framework.getExtension(INetworkClient.class);
 		
 		System.out.println("Bienvenue sur CLEF, une application extensible");
+		
+	}
+
+	@Override
+	public void handleEvent(String name, Object event) {
+		// TODO Auto-generated method stub
 		
 	}
 

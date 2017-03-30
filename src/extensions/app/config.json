@@ -1,6 +1,0 @@
-{
-	"name": "App",
-	"type": "IApp",
-	"autorun": true,
-	"killable": false
-}
