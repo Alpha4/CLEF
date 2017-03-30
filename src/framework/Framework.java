@@ -142,9 +142,11 @@ public class Framework {
 	}
 	
 	public static void event(String name, Object event) {
-		List<IExtension> handlers = Framework.eventHandlers.get(name);
-		for (IExtension handler : handlers) {
-			handler.handleEvent(name, event);
+		if (Framework.eventHandlers.containsKey(name)) {
+			List<IExtension> handlers = Framework.eventHandlers.get(name);
+			for (IExtension handler : handlers) {
+				handler.handleEvent(name, event);
+			}
 		}
 	}
 	

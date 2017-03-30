@@ -36,6 +36,7 @@ public class ExtensionContainer implements InvocationHandler {
 		try {
 			this.status = Status.LOADED;
 			this.extension = (IExtension) extensionClass.newInstance();
+			Framework.event("extension.loaded", this.extensionClass);
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.status = Status.ERROR;
@@ -50,7 +51,6 @@ public class ExtensionContainer implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		
-		//System.out.println(this.getExtension());
 		if (method.getName() == "load") {
 			this.load();
 			return null;
