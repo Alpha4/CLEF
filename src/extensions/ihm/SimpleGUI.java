@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import framework.Framework;
 import framework.plugin.IGUI;
 import framework.plugin.INetworkClient;
+import framework.plugin.INetworkServer;
 
 public class SimpleGUI implements IGUI {
 	// Connect status constants
@@ -53,12 +54,12 @@ public class SimpleGUI implements IGUI {
 	private String pseudo;
 
 	private INetworkClient inetwork;
+	private INetworkServer iserver;
 
 
 	// Constructeur
 	public SimpleGUI(){
 
-		inetwork = (INetworkClient) Framework.getExtension(INetworkClient.class);
 		hostIP = "localhost";
 		port = 1337;
 		connectionStatus = DISCONNECTED;
@@ -121,6 +122,17 @@ public class SimpleGUI implements IGUI {
 			public void actionPerformed(ActionEvent e) {
 				// Request a connection initiation
 				if (e.getActionCommand().equals("connect")) {
+					
+					if (hostOption.isSelected() == true) {
+						
+						iserver = (INetworkServer) Framework.getExtension(INetworkServer.class);
+						port = Integer.parseInt(portField.getText());
+						iserver.setPort(port);
+						iserver.run();
+
+						
+					}
+					
 					chatLine.setEnabled(true);
 					sendButton.setEnabled(true);
 					disconnectButton.setEnabled(true);
@@ -130,6 +142,8 @@ public class SimpleGUI implements IGUI {
 					ipField.setEnabled(false);
 					pseudoField.setEnabled(false);
 					
+					inetwork = (INetworkClient) Framework.getExtension(INetworkClient.class);
+					inetwork.setPort(port);
 					inetwork.setServer(ipField.getText());
 					
 					connectionStatus = BEGIN_CONNECT;
@@ -137,12 +151,18 @@ public class SimpleGUI implements IGUI {
 					statusBar.setText("Online");
 					setPseudo(getPseudoField().getText());
 
-					mainFrame.repaint();
+					mainFrame.repaint();	
+					
 
 				}
 				// Disconnect
 				if (e.getActionCommand().equals("disconnect")){
 
+					if (hostOption.isSelected() == true) {
+						iserver.stopThread();						
+					}else{
+						inetwork.stopThread();
+					}
 					connectButton.setEnabled(true);
 					ipField.setEnabled(true);
 					hostOption.setEnabled(true);

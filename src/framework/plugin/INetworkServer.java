@@ -11,4 +11,7 @@ public interface INetworkServer extends IExtension {
 */
 	void run();
 
+	void setPort(int port);
+	public void stopThread();
+
 }

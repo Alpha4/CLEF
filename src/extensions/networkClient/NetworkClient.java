@@ -8,19 +8,22 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import javax.sql.rowset.serial.SerialArray;
+
 import framework.Framework;
 import framework.plugin.IGUI;
 import framework.plugin.INetworkClient;
 
 public class NetworkClient implements INetworkClient {
 	
-	public static final int PORT = 1337;
+	private int port;
 	
 	private Socket socket;
 	private Scanner input;
 	private PrintWriter output;
 	
 	private IGUI gui;
+	
 	
 	public NetworkClient() throws IOException {
 		gui = (IGUI) Framework.getExtension(IGUI.class);
@@ -45,10 +48,18 @@ public class NetworkClient implements INetworkClient {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void setPort(int port){
+		this.port = port;
+	}
+	
+	public int getPort(){
+		return this.port;
+	}
 
 	public void setServer(String server) {
 		try {
-			socket = new Socket(server,PORT);
+			socket = new Socket(server,getPort());
 			input = new Scanner(new InputStreamReader(socket.getInputStream()));
 			output = new PrintWriter(socket.getOutputStream(),true);
 		} catch (IOException e) {
@@ -58,7 +69,7 @@ public class NetworkClient implements INetworkClient {
 
 	@Override
 	public void run() {
-		Thread t = new Thread() {
+		Thread thread = new Thread() {
 			public void run () {
 				while(true) {
 					if (input != null) {
@@ -72,8 +83,17 @@ public class NetworkClient implements INetworkClient {
 				}
 			}
 		};
-		t.start();
+		thread.start();
 		
+	}
+	
+	public void stopThread() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

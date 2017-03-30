@@ -13,7 +13,7 @@ import framework.plugin.INetworkServer;
 
 public class NetworkServer implements INetworkServer {
 	
-	public static final int PORT = 1337;
+	private int port;
 	
 	private ServerSocket serverSocket;
 	private List<ClientThread> clientThreads = new ArrayList<ClientThread>();
@@ -43,25 +43,51 @@ public class NetworkServer implements INetworkServer {
 		}
 	}
 	
-	public void run() {
+	public void setPort(int port){
+		this.port = port;
+	}
+	
+	public int getPort(){
+		return this.port;
+	}
+	
+	public void stopThread() {
 		try {
-			serverSocket = new ServerSocket(PORT);
-			System.out.println("Server is listening on "+PORT);
-			while (true) {
-				Socket socket = serverSocket.accept();
-				connect(socket);
-			}
+			serverSocket.close();
 		} catch (IOException e) {
-			
-		} finally {
-			try {
-				if (serverSocket != null)
-					serverSocket.close();
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-			}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
+	public void run() {
+		Thread thread = new Thread() {
+			public void run () {
+
+				try {
+					serverSocket = new ServerSocket(getPort());
+					System.out.println("Server is listening on "+getPort());
+					while (true) {
+						Socket socket = serverSocket.accept();
+						connect(socket);
+					}
+				} catch (IOException e) {
+
+				} finally {
+					try {
+						if (serverSocket != null)
+							serverSocket.close();
+					} catch (IOException e) {
+						System.out.println(e.getMessage());
+					}
+				}
+			}
+		};
+		
+		thread.start();
+	}
+	
+	
 	
 	private class ClientThread extends Thread {
 		

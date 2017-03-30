@@ -33,4 +33,10 @@ public interface INetworkClient extends IExtension {
 *@brief méthode appelée pour lors du lancement du client
 */
 	void run();
+	
+
+	void setPort(int port);
+	public void stopThread();
+
+	int getPort();
 }
