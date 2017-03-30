@@ -4,11 +4,16 @@ import framework.IExtension;
 
 public interface IGUI extends IExtension{
 	
-		
+	/*
+	 * Reçoit le message
+	 * @param m : le message
+	 */
 	void receiveMessage(String m);
-	public void receiveRoomList();
-	public void connectedToServResponse();
-	public void disconnectedFromServer();
+	
+	
+	/*
+	 * Initialisation
+	 */
 	public void initGUI();
 	
 	
