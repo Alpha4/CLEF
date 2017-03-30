@@ -22,11 +22,9 @@ public class NetworkClient implements INetworkClient {
 	private Scanner input;
 	private PrintWriter output;
 	
-	private IGUI gui;
-	
 	
 	public NetworkClient() throws IOException {
-		gui = (IGUI) Framework.getExtension(IGUI.class);
+		
 	}
 
 	public void send(String message) {
@@ -75,7 +73,7 @@ public class NetworkClient implements INetworkClient {
 					if (input != null) {
 						try {
 							String message = read();
-							gui.receiveMessage(message);
+							Framework.event("message.received",message);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}

@@ -397,12 +397,16 @@ public class SimpleGUI implements IGUI {
 	 * Méthode a exécuter au lancement de l'extension
 	 */
 	public void run() {
-		this.initGUI();		
+		this.initGUI();
+		Framework.handleEvent("message.received", this);
 	}
 	
 	@Override
 	public void handleEvent(String name, Object event) {
-		// TODO Auto-generated method stub
+		
+		if (name == "message.received") {
+			this.receiveMessage((String)event);
+		}
 		
 	}
 
