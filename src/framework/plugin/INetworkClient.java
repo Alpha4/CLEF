@@ -1,7 +1,5 @@
 package framework.plugin;
 
-import java.net.InetAddress;
-
 import framework.IExtension;
 
 /**
@@ -19,12 +17,12 @@ public interface INetworkClient extends IExtension {
 	String getClientName();
 /**
 *definir le nom du client
-*@param String : nom du client
+*@param clientName nom du client
 */
 	void setClientName(String clientName);
 /**
 *definir l'adresse du serveur
-*@param String : adresse serveur
+*@param server adresse serveur
 */
 	void setServer(String server);
 /**
@@ -34,16 +32,16 @@ public interface INetworkClient extends IExtension {
 	
 /**
  * définir le port d'écoute du client
- * @param port
+ * @param port le port d'écoute
  */
 	void setPort(int port);
 /**
  * méthode qui ferme le socket du Client
  */
-	public void stopClient();
+void stopClient();
 /**
  * Méthode retournant le port du Client.
- * @return
+ * @return le port du client
  */
 	int getPort();
 }

@@ -8,12 +8,12 @@ public interface IExtension {
 	/**
 	 * Méthode appelée au lancement de l'extension
 	 */
-	public void run();
+	void run();
 	
 	/**
 	 * Méthode appelée après qu'un événement soit lancé
-	 * @param String name, correspondant au nom de l'événement
-	 * @param Object event, correspondant à l'objet associé à l'événement
+	 * @param name, correspondant au nom de l'événement
+	 * @param event, correspondant à l'objet associé à l'événement
 	 */
-	public void handleEvent(String name, Object event);
+	void handleEvent(String name, Object event);
 }

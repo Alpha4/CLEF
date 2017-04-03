@@ -48,7 +48,7 @@ public class Framework {
 	
 	/**
 	 * Permet de lire la configuration de l'application et récupérer toutes les extensions nécessaires
-	 * @param Config frameworkConfig: Configuration de l'application
+	 * @param frameworkConfig: Configuration de l'application
 	 */
 	private static void loadDependencies(Config frameworkConfig) {
 		
@@ -95,7 +95,7 @@ public class Framework {
 	
 	/**
 	 * Récupère la première extension disponible de l'interface demandée en paramètre
-	 * @param Class<?> cl, l'interface demandée
+	 * @param cl, l'interface demandée
 	 * @return IExtension, une extension
 	 */
 	public static IExtension getExtension(Class<?> cl){
@@ -104,7 +104,7 @@ public class Framework {
 	
 	/**
 	 * Récupère la liste des extensions disponible de l'interface demandée en paramètre
-	 * @param Class<?> cl, l'interface demandée
+	 * @param cl, l'interface demandée
 	 * @return List<IExtension>, la liste des extensions
 	 */
 	public static List<IExtension> get(Class<?> cl) {
@@ -121,9 +121,9 @@ public class Framework {
 	
 	/**
 	 * Récupère l'extension suivant l'interface et la classe de l'extension donnée en paramètre
-	 * @param Class<?> cl, l'interface demandée
-	 * @param Class<?> cl2, la classe de l'extension
-	 * @return
+	 * @param cl, l'interface demandée
+	 * @param cl2, la classe de l'extension
+	 * @return l'extension voulue
 	 */
 	public static IExtension get(Class<?> cl, Class<?> cl2) {
 		
@@ -139,7 +139,7 @@ public class Framework {
 	/**
 	 * Charge le fichier de config ('config.json') correspondant au classpath de l'extension
 	 * Si classpath est null, charge le fichier de config de l'application
-	 * @param String classpath de l'extension
+	 * @param classpath de l'extension
 	 * @return Config, le fichier de config correspondant
 	 */
 	private static Config loadConfig(String classpath) {
@@ -166,8 +166,8 @@ public class Framework {
 	
 	/**
 	 * Créé le proxy de l'extension suivant la classe et le fichier de config associé
-	 * @param Class<?> cl, le classe de l'extension
-	 * @param Config conf, le fichier de config (config.json) associé
+	 * @param cl, le classe de l'extension
+	 * @param conf, le fichier de config (config.json) associé
 	 * @return IExtension, l'extension derrière un proxy
 	 */
 	private static IExtension createExtension(Class<?> cl, Config conf) {
@@ -182,8 +182,8 @@ public class Framework {
 	
 	/**
 	 * Déclare un événement qui vient d'avoir lieu
-	 * @param String name, le nom de l'événement
-	 * @param Object event, un objet associé à l'événement
+	 * @param name, le nom de l'événement
+	 * @param event, un objet associé à l'événement
 	 */
 	public static void event(String name, Object event) {
 		if (Framework.eventHandlers.containsKey(name)) {
@@ -196,8 +196,8 @@ public class Framework {
 	
 	/**
 	 * Demande à être notifié à chaque fois qu'un événement est déclaré
-	 * @param String name, le nom de l'événement
-	 * @param IExtension handler, l'extension qui souhaite être notifié
+	 * @param name, le nom de l'événement
+	 * @param handler, l'extension qui souhaite être notifié
 	 */
 	public static void subscribeEvent(String name, IExtension handler) {
 		if (!Framework.eventHandlers.containsKey(name)) {

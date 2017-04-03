@@ -11,12 +11,12 @@ public interface INetworkServer extends IExtension {
 	void run();
 /**
  * définir le port du serveur
- * @param port
+ * @param port le port du serveur
  */
 	void setPort(int port);
 /**
  * méthode qui ferme le server socket
  */
-	public void stopServer();
+void stopServer();
 
 }

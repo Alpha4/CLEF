@@ -236,7 +236,7 @@ public class SimpleGUI implements IGUI {
 
 	/**
 	 * Défini le port
-	 * @param port
+	 * @param port le port
 	 */
 	public void setPort(int port) {
 		this.port = port;
@@ -346,7 +346,7 @@ public class SimpleGUI implements IGUI {
 
 	/**
 	 * Défini l'IP
-	 * @param hostIP
+	 * @param hostIP l'IP de l'hôte
 	 */
 	public void setHostIP(String hostIP) {
 		this.hostIP = hostIP;
@@ -354,7 +354,7 @@ public class SimpleGUI implements IGUI {
 
 	/**
 	 * Défini le pseudo
-	 * @param pseudo
+	 * @param pseudo le pseudo de l'utilisateur
 	 */
 	public void setPseudo(String pseudo) {
 		this.pseudo = pseudo;
@@ -362,7 +362,7 @@ public class SimpleGUI implements IGUI {
 	
 	/**
 	 * Retourne le status de la connexion
-	 * @return
+	 * @return le status de la connexion
 	 */
 	public int getConnectionStatus() {
 		return connectionStatus;
@@ -370,7 +370,7 @@ public class SimpleGUI implements IGUI {
 	
 	/**
 	 *  Défini le status de la connexion
-	 * @param connectionStatus
+	 * @param connectionStatus le status de la connexion
 	 */
 	public void setConnectionStatus(int connectionStatus) {
 		this.connectionStatus = connectionStatus;
@@ -378,7 +378,7 @@ public class SimpleGUI implements IGUI {
 
 	/**
 	 * Retourne le booléen indiquant si on est en mode "Host"
-	 * @return
+	 * @return true si mode host, false sinon
 	 */
 	public boolean isHost() {
 		return isHost;
@@ -386,26 +386,25 @@ public class SimpleGUI implements IGUI {
 
 	/**
 	 * Défini si on est en mode "Host" ou non, pour les radioButtons
-	 * @param isHost
+	 * @param isHost true si mode host, false sinon
 	 */
 	public void setHost(boolean isHost) {
 		this.isHost = isHost;
 	}
 
 
-	@Override
 	/**
 	 * Méthode a exécuter au lancement de l'extension
+	 * @return void
 	 */
 	public void run() {
 		this.initGUI();
 		Framework.subscribeEvent("message.received", this);
 	}
-	
-	@Override
+
 	public void handleEvent(String name, Object event) {
 		
-		if (name == "message.received") {
+		if (name.equals("message.received")) {
 			this.receiveMessage((String)event);
 		}
 		

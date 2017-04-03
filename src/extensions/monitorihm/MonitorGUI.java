@@ -2,25 +2,16 @@ package extensions.monitorihm;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
-import extensions.monitoring.Monitoring;
-import framework.ExtensionActions;
-import framework.ExtensionContainer;
 import framework.Framework;
 import framework.plugin.IMonitorGUI;
 import framework.plugin.IMonitoring;
-import framework.plugin.INetworkClient;
-
 
 
 public class MonitorGUI extends JPanel

@@ -17,7 +17,7 @@ public interface IGUI extends IExtension{
 	/**
 	 * Initialisation
 	 */
-	public void initGUI();
+    void initGUI();
 	
 	
 

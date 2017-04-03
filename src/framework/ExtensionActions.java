@@ -1,8 +1,8 @@
 package framework;
 
 public interface ExtensionActions {
-	public void load();
-	public void kill();
-	public String getStatus();
-	public String getDescription();
+	void load();
+	void kill();
+	String getStatus();
+	String getDescription();
 }

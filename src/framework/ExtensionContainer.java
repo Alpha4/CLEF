@@ -55,26 +55,26 @@ public class ExtensionContainer implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		
-		if (method.getName() == "load") {
+		if (method.getName().equals("load")) {
 			this.load();
 			return null;
 		}
 		
-		if (method.getName() == "kill") {
+		if (method.getName().equals("kill")) {
 			this.kill();
 			return null;
 		}
 		
-		if (method.getName() == "getStatus") {
+		if (method.getName().equals("getStatus")) {
 			return this.getStatus();
 		}
 		
-		if (method.getName() == "getDescription") {
+		if (method.getName().equals("getDescription")) {
 			return this.meta.getDescription();
 		}
 		
-		if (this.status == Status.KILLED || 
-			this.status == Status.ERROR)  {
+		if (this.status.equals(Status.KILLED) ||
+				this.status.equals(Status.ERROR))  {
 			throw new KilledExtensionException();
 		}
 		
