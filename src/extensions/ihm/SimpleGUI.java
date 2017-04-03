@@ -393,9 +393,8 @@ public class SimpleGUI implements IGUI {
 	}
 
 
-	/**
+	/*
 	 * Méthode a exécuter au lancement de l'extension
-	 * @return void
 	 */
 	public void run() {
 		this.initGUI();
