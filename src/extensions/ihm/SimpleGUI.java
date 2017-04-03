@@ -420,18 +420,15 @@ class ActionAdapter implements ActionListener {
 //Keyboard listener for easy key-listener coding
 class KeyboardListener implements KeyListener {
 
-	@Override
 	public void keyPressed(KeyEvent e) {
 
 	}
 
-	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 
