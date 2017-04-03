@@ -44,8 +44,12 @@ public class ExtensionContainer implements InvocationHandler {
 	}
 	
 	private void kill() {
-		this.extension = null;
-		this.status = Status.KILLED;
+		if (this.meta.isKillable()) {
+			this.extension = null;
+			this.status = Status.KILLED;
+		} else {
+			System.out.println("This extension can't be killed");
+		}
 	}
 
 	@Override

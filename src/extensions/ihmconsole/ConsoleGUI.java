@@ -80,7 +80,7 @@ public class ConsoleGUI implements IGUI{
 	@Override
 	public void run() {
 		initGUI();
-		Framework.handleEvent("message.received", this);
+		Framework.subscribeEvent("message.received", this);
 		
 	}
 

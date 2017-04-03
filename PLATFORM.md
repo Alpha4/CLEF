@@ -33,6 +33,26 @@ Retourne la première implémentation d'une interface donnée en paramètre.
     IAffichage affichage = Framework.getExtension(IAffichage);
 ```
 
+### event(String, Object)
+
+`public static void event(String name, Object event)`
+
+Déclare un événement qui vient d'avoir lieu
+
+```
+	Framework.event("message.received","Bonjour, je suis un message");
+```
+
+### subscribeEvent(String, IExtension)
+
+`public static void subscribeEvent(String name, IExtension handler)`
+
+Demande à être notifié à chaque fois qu'un événement est déclaré
+
+```
+	Framework.subscribeEvent("message.received",this);
+```
+
 ## Plugins
 
 Les plugins se situent dans le package `extensions`.

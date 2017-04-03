@@ -399,7 +399,7 @@ public class SimpleGUI implements IGUI {
 	 */
 	public void run() {
 		this.initGUI();
-		Framework.handleEvent("message.received", this);
+		Framework.subscribeEvent("message.received", this);
 	}
 	
 	@Override

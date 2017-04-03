@@ -182,13 +182,12 @@ implements TableModelListener, IMonitorGUI {
 	@Override
 	public void run() {
 		createAndShowGUI(); 
-		Framework.handleEvent("extension.loaded", this);
+		Framework.subscribeEvent("extension.loaded", this);
 	}
 
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
