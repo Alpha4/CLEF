@@ -1,5 +1,0 @@
-{
-	"name": "NetworkServer",
-	"type": "INetworkServer",
-	"autorun": true
-}

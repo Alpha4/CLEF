@@ -9,7 +9,7 @@ public class Config {
 	String description;
 	String type;
 	boolean autorun;
-	boolean killable;
+	boolean killable = true;
 	List<String> extensions = new ArrayList<String>();
 	
 	public String getName() {

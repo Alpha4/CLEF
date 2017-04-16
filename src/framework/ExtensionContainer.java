@@ -21,7 +21,7 @@ public class ExtensionContainer implements InvocationHandler {
 		return this.status;
 	}
 	
-	private IExtension getExtension() {
+	public IExtension getExtension() {
 		if (extension == null) {
 			this.load();
 		}
@@ -36,6 +36,7 @@ public class ExtensionContainer implements InvocationHandler {
 		try {
 			this.status = Status.LOADED;
 			this.extension = (IExtension) extensionClass.newInstance();
+			this.extension.start();
 			Framework.event("extension.loaded", this.extensionClass);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -44,11 +45,14 @@ public class ExtensionContainer implements InvocationHandler {
 	}
 	
 	private void kill() {
-		if (this.meta.isKillable()) {
-			this.extension = null;
-			this.status = Status.KILLED;
-		} else {
-			System.out.println("This extension can't be killed");
+		if (this.extension != null) {
+			if (this.meta.isKillable()) {
+				this.extension.stop();
+				this.extension = null;
+				this.status = Status.KILLED;
+			} else {
+				System.out.println("This extension can't be killed");
+			}
 		}
 	}
 
@@ -64,6 +68,10 @@ public class ExtensionContainer implements InvocationHandler {
 			return null;
 		}
 		
+		if (method.getName().equals("getExtension")) {
+			return this.getExtension();
+		}
+		
 		if (method.getName().equals("getStatus")) {
 			return this.getStatus();
 		}
@@ -72,11 +80,23 @@ public class ExtensionContainer implements InvocationHandler {
 			return this.meta.getDescription();
 		}
 		
+		if (method.getName().equals("isProxyOf")) {
+			return this.extension != null && this.extension.getClass().getName().equals(args[0].getClass().getName());
+		}
+		
+		if (method.getName().equals("equals")) {
+			return this.equals(args[0]);
+		}
+		
 		if (this.status.equals(Status.KILLED) ||
 				this.status.equals(Status.ERROR))  {
 			throw new KilledExtensionException();
 		}
 		
 		return method.invoke(this.getExtension(), args);
+	}
+	
+	public boolean equals(Object o) {
+		return this.extension != null && this.extension.getClass().getName().equals(((IExtensionActions)o).getExtension().getClass().getName());
 	}
 }

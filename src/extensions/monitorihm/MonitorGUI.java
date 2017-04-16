@@ -10,8 +10,8 @@ import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
 import framework.Framework;
-import framework.plugin.IMonitorGUI;
-import framework.plugin.IMonitoring;
+import interfaces.IMonitorGUI;
+import interfaces.IMonitoring;
 
 
 public class MonitorGUI extends JPanel
@@ -156,7 +156,6 @@ implements TableModelListener, IMonitorGUI {
 	private static void createAndShowGUI() {
 		//Create and set up the window.
 		frame = new JFrame("Montiteur d'extensions");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
 		//Create and set up the content pane.
@@ -170,8 +169,7 @@ implements TableModelListener, IMonitorGUI {
 		frame.setVisible(true);
 	}
 
-	@Override
-	public void run() {
+	public void start() {
 		createAndShowGUI(); 
 		Framework.subscribeEvent("extension.loaded", this);
 	}
@@ -189,4 +187,5 @@ implements TableModelListener, IMonitorGUI {
 		}
 
 	}
+
 }

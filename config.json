@@ -3,9 +3,9 @@
 	"description": "Truc",
 	"extensions": [
 		"extensions.monitoring.Monitoring",
-		"extensions.networkServer.NetworkServer",
-		"extensions.networkClient.NetworkClient",
 		"extensions.ihm.SimpleGUI",
+		"extensions.networkClient.NetworkClient",
+		"extensions.networkServer.NetworkServer",
 		"extensions.monitorihm.MonitorGUI"
 	]
 }

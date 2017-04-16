@@ -1,8 +1,8 @@
 package extensions.ihmconsole;
 
 import framework.Framework;
-import framework.plugin.IGUI;
-import framework.plugin.INetworkClient;
+import interfaces.IGUI;
+import interfaces.INetworkClient;
 
 public class ConsoleGUI implements IGUI{
 
@@ -74,14 +74,12 @@ public class ConsoleGUI implements IGUI{
 
 	}
 	
-	@Override
 	public void run() {
 		initGUI();
 		Framework.subscribeEvent("message.received", this);
 		
 	}
 
-	@Override
 	public void receiveMessage(String m) {
 		//comme les messages sont en pseudo : message
 		System.out.println(m);
@@ -89,12 +87,10 @@ public class ConsoleGUI implements IGUI{
 	}
 	
 	
-
-	@Override
 	public void initGUI() {
 		inetwork = (INetworkClient) Framework.getExtension(INetworkClient.class);
 		inetwork.setPort(port);
-		inetwork.setServer(hostIP);
+		inetwork.setAddress(hostIP);
 		//on reçoit pseudo : message
 		System.out.println("Bienvenue sur CLEF, une application extensible");
 		System.out.println("Affichage en console du chat");

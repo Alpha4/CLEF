@@ -1,5 +1,5 @@
 {
 	"name": "NetworkClient",
 	"type": "INetworkClient",
-	"autorun": true
+	"autorun": false
 }

@@ -6,13 +6,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
 import java.util.List;
+
+import framework.Framework;
+import interfaces.INetworkServer;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import framework.plugin.INetworkServer;
-
 public class NetworkServer implements INetworkServer {
 	
+	private boolean isStarted = false;
 	private int port;
 	
 	private ServerSocket serverSocket;
@@ -53,32 +56,40 @@ public class NetworkServer implements INetworkServer {
 	
 	public void stopServer() {
 		try {
-			serverSocket.close();
+			if (serverSocket != null)
+				serverSocket.close();
+			Framework.event("network.server.disconnected", null);
+			isStarted = false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void run() {
+	public void startServer() {
 		Thread thread = new Thread() {
 			public void run () {
 
 				try {
 					serverSocket = new ServerSocket(getPort());
 					System.out.println("Server is listening on "+getPort());
-					while (true) {
+					isStarted = true;
+					Framework.event("network.server.connected", null);
+					while (!serverSocket.isClosed()) {
 						Socket socket = serverSocket.accept();
 						connect(socket);
 					}
+				} catch (BindException e) {
+					Framework.event("network.server.failed", "Failed to create server. Check IP and port.");
+				} catch (SocketException e) {
+					// Small fix because of the exception thrown at line "serverSocket.accept()" when socket is closed
 				} catch (IOException e) {
-
+					Framework.event("network.server.failed", "Unknown server error ("+e.getClass()+": "+e.getMessage()+")");
 				} finally {
 					try {
 						if (serverSocket != null)
 							serverSocket.close();
 					} catch (IOException e) {
-						System.out.println(e.getMessage());
+						e.printStackTrace();
 					}
 				}
 			}
@@ -87,7 +98,9 @@ public class NetworkServer implements INetworkServer {
 		thread.start();
 	}
 	
-	
+	public boolean isStarted() {
+		return isStarted;
+	}
 	
 	private class ClientThread extends Thread {
 		
@@ -133,12 +146,11 @@ public class NetworkServer implements INetworkServer {
 			try {
 				while(true) {
 					message = input.readLine();
-					System.out.println(message);
 					if (message == null) {
-						System.out.println("close");
 						close();
 						break;
 					}
+					//System.out.println(message);
 					readMessage(message);
 				}
 			} catch (IOException e) {
@@ -147,12 +159,6 @@ public class NetworkServer implements INetworkServer {
 				close();
 			}
 		}
-		
-	}
-
-	@Override
-	public void handleEvent(String name, Object event) {
-		// TODO Auto-generated method stub
 		
 	}
 	

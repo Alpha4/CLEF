@@ -1,4 +1,4 @@
-package framework.plugin;
+package interfaces;
 
 import framework.IExtension;
 /**

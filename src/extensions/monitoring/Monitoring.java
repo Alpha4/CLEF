@@ -5,16 +5,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import framework.IExtension;
-import framework.ExtensionActions;
+import interfaces.IMonitoring;
+import framework.IExtensionActions;
 import framework.Framework;
-import framework.plugin.IMonitoring;
 
 public class Monitoring implements IMonitoring {
 	
 	private static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
 
-	@Override
-	public void run() {
+	
+	public void start() {
 		extensions = Framework.extensions;
 	}
 	
@@ -22,7 +22,7 @@ public class Monitoring implements IMonitoring {
 		Map<Class<?>,String> res = new HashMap<Class<?>,String>();
 		for(Map<Class<?>,IExtension> extensions : this.extensions.values()) {
 			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()){
-				res.put(extension.getKey(), ((ExtensionActions)extension.getValue()).getStatus());
+				res.put(extension.getKey(), ((IExtensionActions)extension.getValue()).getStatus());
 			}
 		}
 		return res;
@@ -32,7 +32,7 @@ public class Monitoring implements IMonitoring {
 		for(Map<Class<?>,IExtension> extensions : this.extensions.values()) {
 			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()){
 				if (extension.getKey().equals(cl)) {
-					((ExtensionActions)extension.getValue()).load();
+					((IExtensionActions)extension.getValue()).load();
 				}
 			}
 		}
@@ -42,13 +42,9 @@ public class Monitoring implements IMonitoring {
 		for(Map<Class<?>,IExtension> extensions : this.extensions.values()) {
 			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()){
 				if (extension.getKey().equals(cl)) {
-					((ExtensionActions)extension.getValue()).kill();
+					((IExtensionActions)extension.getValue()).kill();
 				}
 			}
 		}
-	}
-
-	@Override
-	public void handleEvent(String name, Object event) {
 	}
 }
