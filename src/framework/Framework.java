@@ -101,13 +101,18 @@ public class Framework {
 	/**
 	 * Déclare un événement qui vient d'avoir lieu
 	 * @param name, le nom de l'événement
-	 * @param event, un objet associé à l'événement
+	 * @param payload, un objet associé à l'événement
 	 */
-	public static void event(String name, Object event) {
-		if (Framework.eventHandlers.containsKey(name)) {
-			List<IExtension> handlers = Framework.eventHandlers.get(name);
-			for (IExtension handler : handlers) {
-				handler.handleEvent(name, event);
+	public static void event(String name, Object payload) {
+		
+		Event event = new Event(name, payload);
+		
+		for (Entry<String,List<IExtension>> entry : Framework.eventHandlers.entrySet()) {
+			if (event.is(entry.getKey())) {
+				List<IExtension> handlers = Framework.eventHandlers.get(entry.getKey());
+				for (IExtension handler : handlers) {
+					handler.handleEvent(event);
+				}
 			}
 		}
 	}
@@ -136,7 +141,12 @@ public class Framework {
 		
 		handler = Framework.proxyOf(handler);
 		
-		Framework.eventHandlers.get(name).remove(handler);
+		for (Entry<String,List<IExtension>> entry : Framework.eventHandlers.entrySet()) {
+			Event event = new Event(entry.getKey(), null);
+			if (event.is(name)) {
+				Framework.eventHandlers.get(entry.getKey()).remove(handler);
+			}
+		}
 	}
 	
 	/**
@@ -206,7 +216,7 @@ public class Framework {
 		
 		String path;
 		if (classpath == null) {
-			path = "config.json";
+			path = "application.json";
 		} else {
 			path = classpath.replace(".", "/");
 			path = "src/" + path.substring(0, path.lastIndexOf('/')+1) + "config.json";

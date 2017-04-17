@@ -6,19 +6,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
 import framework.Framework;
+import framework.Event;
 import interfaces.IMonitorGUI;
 import interfaces.IMonitoring;
 
 
-public class MonitorGUI extends JPanel
-implements TableModelListener, IMonitorGUI {
-	private JList list; 
+public class MonitorGUI implements  IMonitorGUI {
 	
-	private static JFrame frame;
+	private JFrame frame;
+	private JPanel mainPanel;
 
 	private JTable table;
 	private DefaultTableModel model;
@@ -26,15 +25,26 @@ implements TableModelListener, IMonitorGUI {
 
 	private JButton loadPluginButton;
 	private JButton killPluginButton;
-	private JButton RefreshButton;
 
 	private IMonitoring monitor;
 	private Map<Class<?>,String> extensionsMap;
 	private Map<Integer,Class<?>> tableMap;
-
-
-	public MonitorGUI() {
-		super(new BorderLayout());
+	
+	/**
+     * Création du GUI et affichage.
+     */
+	private void createAndShowGUI() {
+		//Create and set up the window.
+		frame = new JFrame("Moniteur d'extensions");
+		frame.addWindowListener(new WindowAdapter() {
+			
+			public void windowClosing(WindowEvent e) {
+				// Kill itself
+				((IMonitoring)Framework.getExtension(IMonitoring.class)).killExtension(MonitorGUI.class);
+			}
+		});
+		
+		mainPanel = new JPanel(new BorderLayout());
 
 		// Initialisation du Modèle pour la table et de la Table
         model = new DefaultTableModel();
@@ -62,10 +72,6 @@ implements TableModelListener, IMonitorGUI {
 		killPluginButton.setActionCommand("Kill");
 		killPluginButton.addActionListener(new ButtonListener());
 
-		RefreshButton = new JButton("Refresh");
-		RefreshButton.setActionCommand("Refresh");
-		RefreshButton.addActionListener(new ButtonListener());
-
 
 		//Create a panel that uses BoxLayout.
 		JPanel buttonPane = new JPanel();
@@ -74,40 +80,17 @@ implements TableModelListener, IMonitorGUI {
 		buttonPane.add(loadPluginButton);
 		buttonPane.add(Box.createHorizontalStrut(5));
 		buttonPane.add(killPluginButton);
-		buttonPane.add(Box.createHorizontalStrut(5));
-		buttonPane.add(RefreshButton);
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-		add(listScrollPane, BorderLayout.CENTER);
-		add(buttonPane, BorderLayout.PAGE_END);
+		mainPanel.add(listScrollPane, BorderLayout.CENTER);
+		mainPanel.add(buttonPane, BorderLayout.PAGE_END);
 
+		frame.add(mainPanel);
+		
+		//Display the window.
+		frame.pack(); // pour arranger la taille de la fenetre automatiquement.
+		frame.setVisible(true);
 	}
-
-//ButtonListener pour les différents boutons du moniteur
-	class ButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {      	
-
-			if (e.getActionCommand().equals("Load")) {
-
-				int index = table.getSelectedRow();
-				monitor.loadExtension(tableMap.get(index));	
-				updateTable();
-			}
-
-			if (e.getActionCommand().equals("Kill")) {
-
-				int index = table.getSelectedRow();
-				monitor.killExtension(tableMap.get(index));
-				updateTable();
-			}
-
-			if (e.getActionCommand().equals("Refresh")) {
-				updateTable();
-			}
-
-		}
-	}
-
 
     /**
      * Méthode qui crée la tableMap pour associer les index des lignes à une classe.
@@ -148,44 +131,46 @@ implements TableModelListener, IMonitorGUI {
 		extensionsMap = monitor.getExtensionsStatus();
 		tableMap = createMapTable();    	
 		initTable();
-	}
-
-    /**
-     * Création du GUI et affichage.
-     */
-	private static void createAndShowGUI() {
-		//Create and set up the window.
-		frame = new JFrame("Montiteur d'extensions");
-
-
-		//Create and set up the content pane.
-		JComponent newContentPane = new MonitorGUI();
-
-		newContentPane.setOpaque(true); //content panes must be opaque
-		frame.setContentPane(newContentPane);
-
-		//Display the window.
-		frame.pack(); // pour arranger la taille de la fenetre automatiquement.
-		frame.setVisible(true);
+		frame.repaint();
 	}
 
 	public void start() {
 		createAndShowGUI(); 
-		Framework.subscribeEvent("extension.loaded", this);
+		Framework.subscribeEvent("extension", this);
+	}
+	
+	public void stop() {
+		
+		// Ferme la fenêtre
+		frame.setVisible(false);
+		frame.dispose();
+		frame = null;
 	}
 
-
-	@Override
-	public void tableChanged(TableModelEvent e) {
-
-	}
-
-	@Override
-	public void handleEvent(String name, Object event) {
-		if(name.equals("extension.loaded")){
-			System.out.println("An extension has been loaded, please refresh");
+	public void handleEvent(Event event) {
+		if(event.is("extension.loaded") || event.is("extension.killed") || event.is("extension.error")){
+			updateTable();
 		}
 
+	}
+	
+	//ButtonListener pour les différents boutons du moniteur
+	class ButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {      	
+
+			if (e.getActionCommand().equals("Load")) {
+
+				int index = table.getSelectedRow();
+				monitor.loadExtension(tableMap.get(index));
+			}
+
+			if (e.getActionCommand().equals("Kill")) {
+
+				int index = table.getSelectedRow();
+				monitor.killExtension(tableMap.get(index));
+			}
+
+		}
 	}
 
 }

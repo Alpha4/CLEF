@@ -32,26 +32,36 @@ public class ExtensionContainer implements InvocationHandler {
 		return "[Container: "+this.meta+"]";
 	}
 	
+	private void log(String message) {
+		System.out.println(this.extensionClass.getName()+" : "+message);
+	}
+	
 	private void load() {
 		try {
 			this.status = Status.LOADED;
 			this.extension = (IExtension) extensionClass.newInstance();
 			this.extension.start();
 			Framework.event("extension.loaded", this.extensionClass);
+			this.log("loaded");
 		} catch (Exception e) {
-			e.printStackTrace();
 			this.status = Status.ERROR;
+			Framework.event("extension.error", this.extensionClass);
+			this.log("error ("+e.getClass()+": "+e.getMessage()+")");
+			e.printStackTrace();
 		}
 	}
 	
 	private void kill() {
 		if (this.extension != null) {
 			if (this.meta.isKillable()) {
+				Framework.unsubscribeEvent("*", this.extension);
 				this.extension.stop();
 				this.extension = null;
 				this.status = Status.KILLED;
+				Framework.event("extension.killed", this.extensionClass);
+				this.log("killed");
 			} else {
-				System.out.println("This extension can't be killed");
+				this.log("This extension can't be killed");
 			}
 		}
 	}
@@ -88,9 +98,8 @@ public class ExtensionContainer implements InvocationHandler {
 			return this.equals(args[0]);
 		}
 		
-		if (this.status.equals(Status.KILLED) ||
-				this.status.equals(Status.ERROR))  {
-			throw new KilledExtensionException();
+		if (this.status.equals(Status.KILLED) || this.status.equals(Status.ERROR))  {
+			this.load(); // Try to reload the extension
 		}
 		
 		return method.invoke(this.getExtension(), args);

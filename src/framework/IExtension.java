@@ -17,9 +17,8 @@ public interface IExtension {
 	
 	/**
 	 * Méthode appelée après qu'un événement soit lancé
-	 * @param name, correspondant au nom de l'événement
-	 * @param event, correspondant à l'objet associé à l'événement
+	 * @param event, Event comprenant le nom et le payload
 	 */
-	default void handleEvent(String name, Object event) {};
+	default void handleEvent(Event event) {};
 
 }

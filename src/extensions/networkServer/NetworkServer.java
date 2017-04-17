@@ -40,7 +40,7 @@ public class NetworkServer implements INetworkServer {
 	
 	public void broadcast(ClientThread activeClient, String message) {
 		for(ClientThread client: clientThreads) {
-			if (!client.equals(activeClient)) {
+			if (activeClient == null || !client.equals(activeClient)) {
 				client.sendMessage(message);
 			}
 		}
@@ -56,6 +56,7 @@ public class NetworkServer implements INetworkServer {
 	
 	public void stopServer() {
 		try {
+			broadcast(null, "close");
 			if (serverSocket != null)
 				serverSocket.close();
 			Framework.event("network.server.disconnected", null);
@@ -96,6 +97,10 @@ public class NetworkServer implements INetworkServer {
 		};
 		
 		thread.start();
+	}
+	
+	public void stop() {
+		stopServer();
 	}
 	
 	public boolean isStarted() {

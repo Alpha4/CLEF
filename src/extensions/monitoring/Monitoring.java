@@ -11,7 +11,7 @@ import framework.Framework;
 
 public class Monitoring implements IMonitoring {
 	
-	private static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
+	private Map<Class<?>,Map<Class<?>,IExtension>> extensions;
 
 	
 	public void start() {

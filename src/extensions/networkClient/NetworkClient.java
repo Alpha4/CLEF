@@ -40,9 +40,17 @@ public class NetworkClient implements INetworkClient {
 			thread = new Thread() {
 				public void run () {
 					if (input != null) {
-						while(input.hasNextLine()) {
-							String message = input.nextLine();
-							Framework.event("message.received",message);
+						try {
+							while(input.hasNextLine()) {
+								String message = input.nextLine();
+								if (message.equals("close")) {
+									disconnect();
+								} else {
+									Framework.event("message.received",message);
+								}
+							}
+						} catch (IllegalStateException e) {
+							// Small fix because of the exception thrown at line "input.hasNextLine()" when socket is closed
 						}
 					}
 				}
@@ -70,9 +78,13 @@ public class NetworkClient implements INetworkClient {
 				input.close();
 				output.close();
 			}
-			thread.interrupt();
-			isConnected = false;
-			Framework.event("network.client.disconnected", null);
+			if (thread != null) {
+				thread.interrupt();
+			}
+			if (isConnected) {
+				isConnected = false;
+				Framework.event("network.client.disconnected", null);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

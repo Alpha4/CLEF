@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import framework.Event;
 import framework.Framework;
 import interfaces.IGUI;
 import interfaces.INetworkClient;
@@ -84,21 +85,11 @@ public class SimpleGUI implements IGUI {
 		}
 		
 		// Subscribe to events
-		Framework.subscribeEvent("network.client.connected", this);
-		Framework.subscribeEvent("network.client.disconnected", this);
-		Framework.subscribeEvent("network.client.failed", this);
-		Framework.subscribeEvent("network.server.failed", this);
+		Framework.subscribeEvent("network", this);
 		Framework.subscribeEvent("message.received", this);
 	}
 	
 	public void stop() {
-		
-		// Unsubscribe to events
-		Framework.unsubscribeEvent("network.client.connected", this);
-		Framework.unsubscribeEvent("network.client.disconnected", this);
-		Framework.unsubscribeEvent("network.client.failed", this);
-		Framework.unsubscribeEvent("network.server.failed", this);
-		Framework.unsubscribeEvent("message.received", this);
 		
 		// Ferme la fenêtre
 		mainFrame.setVisible(false);
@@ -106,22 +97,32 @@ public class SimpleGUI implements IGUI {
 		mainFrame = null;
 	}
 	
-	public void handleEvent(String name, Object event) {
+	public void handleEvent(Event event) {
 		
-		if (name.equals("network.client.connected")) {
+		if (event.is("network.client.connected")) {
+			
 			connected();
 			receiveMessage("\n-- Connected --\n");
-		} else if (name.equals("network.client.disconnected")) {
+			
+		} else if (event.is("network.client.disconnected")) {
+			
 			disconnected();
 			receiveMessage("\n-- Disconnected --\n");
-		} else if (name.equals("network.client.failed")) {
-			receiveMessage("Error: "+((String)event));
+			
+		} else if (event.is("network.client.failed")) {
+			
+			receiveMessage("Error: "+((String)event.getPayload()));
 			disconnected();
-		}  else if (name.equals("network.server.failed")) {
-			receiveMessage("Error: "+((String)event));
+			
+		}  else if (event.is("network.server.failed")) {
+			
+			receiveMessage("Error: "+((String)event.getPayload()));
 			disconnected();
-		} else if (name.equals("message.received")) {
-			receiveMessage((String)event);
+			
+		} else if (event.is("message.received")) {
+			
+			receiveMessage((String)event.getPayload());
+			
 		}
 		
 	}
@@ -315,13 +316,11 @@ public class SimpleGUI implements IGUI {
 	
 	private void disconnect() {
 	
-		if (hostOption.isSelected() == true) {
+		if (hostOption.isSelected() == true && server.isStarted()) {
 			server.stopServer();						
+		} else {
+			client.disconnect();
 		}
-		
-		client.disconnect();
-		
-		disconnected();
 	}
 	
 	private void disconnected() {

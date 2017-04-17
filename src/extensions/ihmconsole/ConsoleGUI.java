@@ -1,5 +1,6 @@
 package extensions.ihmconsole;
 
+import framework.Event;
 import framework.Framework;
 import interfaces.IGUI;
 import interfaces.INetworkClient;
@@ -99,10 +100,9 @@ public class ConsoleGUI implements IGUI{
 		
 	}
 
-	@Override
-	public void handleEvent(String name, Object event) {
-		if (name.equals("message.received")) {
-			this.receiveMessage((String)event);
+	public void handleEvent(Event event) {
+		if (event.is("message.received")) {
+			this.receiveMessage((String)event.getPayload());
 		}
 	}
 
