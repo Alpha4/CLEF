@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import framework.Config;
 import framework.Event;
 import framework.Framework;
 import framework.IExtension;
@@ -54,7 +55,7 @@ public class Monitor implements IMonitoring {
 		
 		// Get the extensions
 		extensionsList = new ArrayList<IExtension>();
-		for(Map<Class<?>,IExtension> extensions : Framework.extensions.values()) {
+		for(Map<Class<?>,IExtension> extensions : Framework.getExtensions().values()) {
 			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()) {
 				extensionsList.add(extension.getValue());
 			}
@@ -181,10 +182,9 @@ public class Monitor implements IMonitoring {
 		
 		for (IExtension extension : extensionsList) {
 			Vector<String> row = new Vector<String>();
-			String type = Framework.getExtensionInterface(extension).getName();
-			String name = Framework.getExtensionClass(extension).getName();
-			row.add(type.substring(type.lastIndexOf('.') + 1));
-			row.add(name.substring(name.lastIndexOf('.') + 1));
+			Config config = Framework.getExtensionConfig(extension);
+			row.add(config.getType());
+			row.add(config.getName());
 			row.add(Framework.getExtensionStatus(extension));
 			data.add(row);
 		}

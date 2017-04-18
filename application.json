@@ -1,11 +1,11 @@
 {
 	"name": "CLEF",
-	"description": "Truc",
+	"description": "Un super chat client/serveur avec du TCP, du monitoring et deux super interfaces",
 	"extensions": [
-		"extensions.ihm.SimpleGUI",
-		"extensions.tcpClient.TCPClient",
-		"extensions.tcpServer.TCPServer",
-		"extensions.monitor.Monitor",
-		"extensions.logger.Logger"
+		"simpleGUI",
+		"tcpClient",
+		"tcpServer",
+		"monitor",
+		"logger"
 	]
 }

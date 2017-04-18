@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  */
 class ExtensionContainer implements InvocationHandler {
 
-	Config meta;
+	Config config;
 	IExtension extension;
 	String status;
 	Class<?> extensionInterface;
@@ -27,11 +27,11 @@ class ExtensionContainer implements InvocationHandler {
 	 * @param extensionClass	Classe de l'extension
 	 * @param meta				Configuration de l'extension
 	 */
-	public ExtensionContainer(Class<?> extensionInterface, Class<?> extensionClass, Config meta) {
+	public ExtensionContainer(Class<?> extensionInterface, Class<?> extensionClass, Config config) {
 		super();
 		this.extensionInterface = extensionInterface;
 		this.extensionClass = extensionClass;
-		this.meta = meta;
+		this.config = config;
 		this.status = Status.NOT_LOADED;
 	}
 	
@@ -70,20 +70,12 @@ class ExtensionContainer implements InvocationHandler {
 			return this.status;
 		}
 		
-		if (method.getName().equals("getInterface")) {
-			return this.extensionInterface;
-		}
-		
-		if (method.getName().equals("getExtensionClass")) {
-			return this.extensionClass;
-		}
-		
-		if (method.getName().equals("getDescription")) {
-			return this.meta.getDescription();
+		if (method.getName().equals("getConfig")) {
+			return this.config;
 		}
 		
 		if (method.getName().equals("isKillable")) {
-			return this.meta.isKillable();
+			return this.config.isKillable();
 		}
 		
 		if (method.getName().equals("isProxyOf")) {
@@ -115,7 +107,7 @@ class ExtensionContainer implements InvocationHandler {
 	
 	@Override
 	public String toString() {
-		return "[Container: "+this.meta+"]";
+		return "[Container: "+this.config+"]";
 	}
 	
 	/**
@@ -151,7 +143,7 @@ class ExtensionContainer implements InvocationHandler {
 	 */
 	private boolean kill() {
 		if (this.extension != null) {
-			if (this.meta.isKillable()) {
+			if (this.config.isKillable()) {
 				Framework.unsubscribeEvent("*", this.extension);
 				this.extension.stop();
 				this.extension = null;

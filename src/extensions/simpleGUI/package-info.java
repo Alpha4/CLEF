@@ -5,4 +5,4 @@
  * 
  * Interface graphique pour le chat
  */
-package extensions.ihm;
+package extensions.simpleGUI;

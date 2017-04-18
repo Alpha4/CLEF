@@ -37,25 +37,11 @@ interface IExtensionActions {
 	String getStatus();
 	
 	/**
-	 * Récupère l'interface de l'extension
+	 * Récupère la configuration de l'extension
 	 * 
-	 * @return l'interface de l'extension
+	 * @return la configuration de l'extension
 	 */
-	Class<?> getInterface();
-	
-	/**
-	 * Récupère la classe de l'extension
-	 * 
-	 * @return la classe de l'extension
-	 */
-	Class<?> getExtensionClass();
-	
-	/**
-	 * Récupère la description de l'extension
-	 * 
-	 * @return la description de l'extension
-	 */
-	String getDescription();
+	Config getConfig();
 	
 	/**
 	 * Indique si l'extension peut être killé

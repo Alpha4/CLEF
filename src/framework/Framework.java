@@ -23,11 +23,11 @@ import com.google.gson.*;
  * 		- getConfig()							Récupère la configuration de l'application
  *
  * Extensions:
+ * 		- getExtensions()						Récupère toutes les extensions
  * 		- getExtension(Class<?>)				Récupère une IExtension
  * 		- get(Class<?>)							Récupère une liste d'IExtension
  * 		- get(Class<?>, Class<?>)				Récupère une IExtension
- * 		- getExtensionInterface(IExtension)		Renvoie l'interface de l'extension
- * 		- getExtensionClass(IExtension)			Renvoie la classe de l'extension
+ * 		- getExtensionConfig(IExtension)		Renvoie la configuration de l'extension
  * 		- getExtensionStatus(IExtension)		Renvoie le status d'une extension
  * 		- loadExtension(IExtension)				Charge une extension
  * 		- killExtension(IExtension)				Kill une extension
@@ -40,8 +40,11 @@ import com.google.gson.*;
  * 		- unsubscribeEvent(String, IExtension)	Désouscris à un type d'événement
  */
 public class Framework {
+	
+	private static String extensionsPackage = "extensions";
+	private static String interfacesPackage = "interfaces";
 
-	public static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
+	private static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
 	private static List<IExtension> autorunExtensions;
 	private static Map<String,List<IExtension>> eventHandlers;
 	private static Config config;
@@ -119,6 +122,15 @@ public class Framework {
 	/****************************************/
 
 	/**
+	 * Récupère toutes les extensions
+	 * 
+	 * @return les extensions
+	 */
+	public static Map<Class<?>,Map<Class<?>,IExtension>> getExtensions() {
+		return Framework.extensions;
+	}
+	
+	/**
 	 * Récupère une extension
 	 *
 	 * <p>
@@ -184,29 +196,16 @@ public class Framework {
 	}
 	
 	/**
-	 * Récupère l'interface d'une extension
+	 * Récupère la configuration d'une extension
 	 * 
 	 * <p>
 	 * 
-	 * @param extension		l'extension dont l'interface est demandée
-	 * @return				l'interface de l'extension
+	 * @param extension		l'extension dont la configuration est demandée
+	 * @return				la configuration de l'extension
 	 */
-	public static Class<?> getExtensionInterface(IExtension extension) {
+	public static Config getExtensionConfig(IExtension extension) {
 		extension = Framework.proxyOf(extension);
-		return ((IExtensionActions)extension).getInterface();
-	}
-	
-	/**
-	 * Récupère la classe d'une extension
-	 * 
-	 * <p>
-	 * 
-	 * @param extension		l'extension dont la classe est demandée
-	 * @return				la classe de l'extension
-	 */
-	public static Class<?> getExtensionClass(IExtension extension) {
-		extension = Framework.proxyOf(extension);
-		return ((IExtensionActions)extension).getExtensionClass();
+		return ((IExtensionActions)extension).getConfig();
 	}
 
 	/**
@@ -367,19 +366,22 @@ public class Framework {
 	 */
 	private static void loadDependencies() {
 
-		for(String classpath : Framework.getConfig().getExtensions()) {
-			Config config = Framework.loadConfig(classpath);
+		for(String name : Framework.getConfig().getExtensions()) {
+			Config config = Framework.loadConfig(name);
 
 			try {
+				
+				// Get extension classpath
+				String classpath = extensionsPackage+"."+name+"."+config.getName();
 
-				// Get plugin interface class
-				Class<?> extensionInterface = Class.forName("interfaces."+config.getType());
+				// Get extension interface class
+				Class<?> extensionInterface = Class.forName(interfacesPackage+"."+config.getType());
 
-				// Get plugin class
+				// Get extension class
 				Class<?> extensionClass = Class.forName(classpath);
 
 				// Create Extension
-				IExtension extension = Framework.createExtension(extensionInterface, extensionClass, config);
+				IExtension extension = createExtension(extensionInterface, extensionClass, config);
 
 				if (config.isAutorun()) {
 					autorunExtensions.add(extension);
@@ -407,7 +409,7 @@ public class Framework {
 	 */
 	private static void executeAutorunExtensions() {
 
-		for(IExtension extension : Framework.autorunExtensions) {
+		for(IExtension extension : autorunExtensions) {
 			((IExtensionActions)extension).load();
 		}
 
@@ -425,14 +427,13 @@ public class Framework {
 	 * @param classpath		Classpath de l'extension
 	 * @return				le fichier de configuration correspondant
 	 */
-	private static Config loadConfig(String classpath) {
+	private static Config loadConfig(String name) {
 
 		String path;
-		if (classpath == null) {
+		if (name == null) {
 			path = "application.json";
 		} else {
-			path = classpath.replace(".", "/");
-			path = "src/" + path.substring(0, path.lastIndexOf('/')+1) + "config.json";
+			path = "src/"+extensionsPackage+"/" + name + "/config.json";
 		}
 
 		Gson gson = new Gson();
