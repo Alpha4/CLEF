@@ -6,6 +6,7 @@
 		"monitor",
 		"tcpClient",
 		"tcpServer",
+		"simpleGUI",
 		"consoleGUI"
 	]
 }
