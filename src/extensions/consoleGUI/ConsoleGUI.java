@@ -70,7 +70,7 @@ public class ConsoleGUI implements IGUI {
 		
 		// Subscribe to events
 		Framework.subscribeEvent("network", this);
-		Framework.subscribeEvent("message.received", this);
+		Framework.subscribeEvent("message", this);
 	}
 	
 	@Override
@@ -91,6 +91,8 @@ public class ConsoleGUI implements IGUI {
 			this.state = NOT_CONNECTED;
 			println("Error: "+((String)event.getPayload()));
 		} else if (event.is("message.received")) {
+			println((String)event.getPayload());
+		} else if (event.is("message.sent")) {
 			println((String)event.getPayload());
 		}
 	}
@@ -145,6 +147,8 @@ public class ConsoleGUI implements IGUI {
 	 */
 	private void print(String line) {
 		chatText.setText(chatText.getText()+line);
+		
+		mainFrame.repaint();
 	}
 	
 	/**
@@ -260,12 +264,9 @@ public class ConsoleGUI implements IGUI {
 		if (!message.isEmpty()){
 		
 			String newMessage = client.getPseudo() + " : " + message;
-			println(newMessage);
 			chatLine.setText("");			
 			client.send(newMessage);
 		}
-		
-		mainFrame.repaint();
 	}
 	
 	/**

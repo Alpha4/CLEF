@@ -90,7 +90,7 @@ public class SimpleGUI implements IGUI {
 		
 		// Subscribe to events
 		Framework.subscribeEvent("network", this);
-		Framework.subscribeEvent("message.received", this);
+		Framework.subscribeEvent("message", this);
 	}
 	
 	@Override
@@ -128,6 +128,10 @@ public class SimpleGUI implements IGUI {
 		} else if (event.is("message.received")) {
 			
 			receiveMessage((String)event.getPayload());
+			
+		} else if (event.is("message.sent")) {
+			
+			sentMessage((String)event.getPayload());
 			
 		}
 		
@@ -390,15 +394,23 @@ public class SimpleGUI implements IGUI {
 
 		if (!message.isEmpty()){
 
-			String chat = chatText.getText();
-			String newChat = chat + "\n" + pseudo + " : " + message;
 			String newMessage = pseudo + " : " + message;
-			chatText.setText(newChat);
-			chatLine.setText("");
 			client.send(newMessage);
+			chatLine.setText("");
 		}
 		
 		mainFrame.repaint();
+	}
+	
+	/**
+	 * Affiche le message envoyé
+	 * 
+	 * @param message le message envoyé
+	 */
+	private void sentMessage(String message) {
+		String chat = chatText.getText();
+		String newChat = chat + "\n" + message;
+		chatText.setText(newChat);
 	}
 	
 	/**

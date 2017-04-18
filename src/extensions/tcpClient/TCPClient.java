@@ -73,6 +73,7 @@ public class TCPClient implements INetworkClient {
 	@Override
 	public void send(String message) {
 		output.println(message);
+		Framework.event("message.sent",message);
 	}
 	
 	@Override
