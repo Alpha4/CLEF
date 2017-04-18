@@ -1,7 +1,0 @@
-{
-	"name": "Monitoring",
-	"type": "IMonitoring",
-	"autorun": true,
-	"killable": false,
-	"description": "Permet de monitorer les autres extensions"
-}

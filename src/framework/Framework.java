@@ -11,6 +11,11 @@ import java.util.Map.Entry;
 
 import com.google.gson.*;
 
+/**
+ * Framework est la classe principale de la plateforme.
+ * 
+ * Elle propose un API complète pour gérer les extensions.
+ */
 public class Framework {
 
 	public static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
@@ -20,7 +25,12 @@ public class Framework {
 	
 	private static Config config;
 	
-	// Public functions
+	
+	/****************************************/
+	/*                                      */
+	/*             APPLICATION              */
+	/*                                      */
+	/****************************************/
 
 	public static void main(String[] args) throws Exception {
 		
@@ -33,18 +43,26 @@ public class Framework {
 		config = Framework.loadConfig(null);
 		
 		/* 2- Load dependencies */
-		Framework.loadDependencies(config);
+		Framework.loadDependencies();
 		
 		/* 3- Execute autorun extensions */
 		Framework.executeAutorunExtensions();
 		
 	}
 	
+	/**
+	 * Quitte le programme
+	 * 
+	 * Essaye d'arrêter gracieusement chacune des extensions avant de
+	 * quitter le programme
+	 */
 	public static void exit() {
 		
 		// Essaye d'arrêter gracieusement chacune des extensions
-		for(IExtension extension : Framework.autorunExtensions) {
-			((IExtensionActions)extension).kill();
+		for(Map<Class<?>,IExtension> extensions : Framework.extensions.values()) {
+			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()){
+				((IExtensionActions)extension.getValue()).kill();
+			}
 		}
 		
 		// Ferme le programme
@@ -53,24 +71,51 @@ public class Framework {
 	}
 	
 	/**
-	 * Récupère la première extension disponible de l'interface demandée en paramètre
+	 * Récupère la configuration de l'application
+	 * 
+	 * Permet de récupérer l'objet Config de l'application ('application.json')
+	 * 
+	 * @return Configuration de l'application
+	 */
+	public static Config getConfig() {
+		return Framework.config;
+	}
+
+	
+	/****************************************/
+	/*                                      */
+	/*              EXTENSIONS              */
+	/*                                      */
+	/****************************************/
+	
+	/**
+	 * Récupère une extension
+	 * 
+	 * Récupère la première extension disponible en fonction de l'interface
+	 * donnée en paramètre
+	 * 
 	 * @param cl, l'interface demandée
-	 * @return IExtension, une extension
+	 * @return l'extension
 	 */
 	public static IExtension getExtension(Class<?> cl){
 		return Framework.get(cl).get(0);
 	}
 	
 	/**
-	 * Récupère la liste des extensions disponible de l'interface demandée en paramètre
+	 * Récupère une liste d'extension
+	 * 
+	 * Récupère la liste des extensions disponible en fonction de l'interface
+	 * donnée en paramètre
+	 * 
 	 * @param cl, l'interface demandée
-	 * @return List<IExtension>, la liste des extensions
+	 * @return la liste des extensions
 	 */
 	public static List<IExtension> get(Class<?> cl) {
 		List<IExtension> extensions = new ArrayList<IExtension>();
 		
 		if (Framework.extensions.get(cl) == null)
-			throw new RuntimeException("No \""+cl.getName()+"\" extensions are configured in this application. Check your config.json!");
+			throw new RuntimeException("No \""+cl.getName()+"\" extensions are"
+					+ " configured in this application. Check your config.json!");
 		
 		for(Entry<Class<?>, IExtension> extension : Framework.extensions
 				.get(cl)
@@ -82,9 +127,13 @@ public class Framework {
 	}
 	
 	/**
-	 * Récupère l'extension suivant l'interface et la classe de l'extension donnée en paramètre
+	 * Récupère une extension
+	 * 
+	 * Récupère l'extension suivant l'interface et la classe de l'extension
+	 * donnée en paramètre
+	 * 
 	 * @param cl, l'interface demandée
-	 * @param cl2, la classe de l'extension
+	 * @param cl2, la classe de l'extension choisie
 	 * @return l'extension voulue
 	 */
 	public static IExtension get(Class<?> cl, Class<?> cl2) {
@@ -99,13 +148,78 @@ public class Framework {
 	}
 	
 	/**
+	 * Récupère le status d'une extension
+	 * 
+	 * @param extension, l'extension dont le status est demandé
+	 * @return le status (Voir la classe framework.Status)
+	 */
+	public static String getExtensionStatus(IExtension extension) {
+		return ((IExtensionActions)extension).getStatus();
+	}
+	
+	/**
+	 * Charge une extension
+	 * 
+	 * @param extension, l'extension à charger
+	 * @return Vrai si l'extension a bien été chargée, faux sinon
+	 */
+	public static boolean loadExtension(IExtension extension) {
+		extension = Framework.proxyOf(extension);
+		if (!((IExtensionActions)extension).getStatus().equals(Status.LOADED))
+			return ((IExtensionActions)extension).load();
+		return false;
+	}
+	
+	/**
+	 * Kill une extension
+	 * 
+	 * @param extension, l'extension à killer
+	 * @return Vrai si l'extension a bien été killed, faux sinon
+	 */
+	public static boolean killExtension(IExtension extension) {
+		extension = Framework.proxyOf(extension);
+		if (!((IExtensionActions)extension).getStatus().equals(Status.KILLED))
+			return ((IExtensionActions)extension).kill();
+		return false;
+	}
+	
+	/**
+	 * Indique si une extension peut être killed
+	 * 
+	 * @param extension, l'extension en question
+	 * @return Vrai si l'extension peut être killed, faux sinon
+	 */
+	public static boolean isKillable(IExtension extension) {
+		extension = Framework.proxyOf(extension);
+		return ((IExtensionActions)extension).isKillable();
+	}
+	
+	
+	/****************************************/
+	/*                                      */
+	/*                EVENTS                */
+	/*                                      */
+	/****************************************/
+	
+	/**
 	 * Déclare un événement qui vient d'avoir lieu
+	 * 
 	 * @param name, le nom de l'événement
 	 * @param payload, un objet associé à l'événement
 	 */
 	public static void event(String name, Object payload) {
 		
 		Event event = new Event(name, payload);
+		
+		Framework.event(event);
+	}
+	
+	/**
+	 * Déclare un événement qui vient d'avoir lieu
+	 * 
+	 * @param event, l'événement
+	 */
+	public static void event(Event event) {
 		
 		for (Entry<String,List<IExtension>> entry : Framework.eventHandlers.entrySet()) {
 			if (event.is(entry.getKey())) {
@@ -118,9 +232,13 @@ public class Framework {
 	}
 	
 	/**
-	 * Demande à être notifié à chaque fois qu'un événement est déclaré
+	 * Souscris à un type d'événement
+	 * 
+	 * Demande à être notifié à chaque fois qu'un événement d'un certain type
+	 * est déclaré
+	 * 
 	 * @param name, le nom de l'événement
-	 * @param handler, l'extension qui souhaite être notifié
+	 * @param handler, l'extension qui souhaite être notifiée
 	 */
 	public static void subscribeEvent(String name, IExtension handler) {
 		
@@ -137,6 +255,15 @@ public class Framework {
 		}
 	}
 	
+	/**
+	 * Se désouscris à un type d'événement
+	 * 
+	 * Demande à ne plus être notifié à chaque fois qu'un événement
+	 * d'un certain type est déclaré
+	 * 
+	 * @param name, le nom de l'événement
+	 * @param handler, l'extension qui ne souhaite plus être notifiée
+	 */
 	public static void unsubscribeEvent(String name, IExtension handler) {
 		
 		handler = Framework.proxyOf(handler);
@@ -149,23 +276,21 @@ public class Framework {
 		}
 	}
 	
-	/**
-	 * Permet de récupérer l'objet Config de l'application ('config.json')
-	 * @return Config de l'application
-	 */
-	public static Config getConfig() {
-		return Framework.config;
-	}
-	
-	// Private functions
+	/****************************************/
+	/*                                      */
+	/*          PRIVATE FUNCTIONS           */
+	/*                                      */
+	/****************************************/
 	
 	/**
-	 * Permet de lire la configuration de l'application et récupérer toutes les extensions nécessaires
-	 * @param frameworkConfig: Configuration de l'application
+	 * Pré-charge les dépendances de l'application
+	 * 
+	 * Permet de lire la configuration de l'application et récupérer toutes
+	 * les extensions nécessaires
 	 */
-	private static void loadDependencies(Config frameworkConfig) {
+	private static void loadDependencies() {
 		
-		for(String classpath : frameworkConfig.getExtensions()) {
+		for(String classpath : Framework.getConfig().getExtensions()) {
 			Config config = Framework.loadConfig(classpath);
 			
 			try {
@@ -196,7 +321,10 @@ public class Framework {
 	}
 	
 	/**
-	 * Execute la methode run() de toutes les extensions ayant le paramètre "autorun" à vrai
+	 * Démarre les extensions "autorun"
+	 * 
+	 * Execute la methode start() de toutes les extensions ayant le paramètre
+	 * "autorun" à true
 	 */
 	private static void executeAutorunExtensions() {
 		
@@ -207,10 +335,14 @@ public class Framework {
 	}
 	
 	/**
-	 * Charge le fichier de config ('config.json') correspondant au classpath de l'extension
+	 * Charge un fichier de configuration
+	 * 
+	 * Charge le fichier de configuration ('config.json') correspondant au classpath
+	 * de l'extension
 	 * Si classpath est null, charge le fichier de config de l'application
+	 * 
 	 * @param classpath de l'extension
-	 * @return Config, le fichier de config correspondant
+	 * @return le fichier de configuration correspondant
 	 */
 	private static Config loadConfig(String classpath) {
 		
@@ -235,21 +367,31 @@ public class Framework {
 	}
 	
 	/**
+	 * Créer l'extension
+	 * 
 	 * Créer le proxy de l'extension suivant la classe et le fichier de config associé
+	 * 
 	 * @param cl, le classe de l'extension
 	 * @param conf, le fichier de config (config.json) associé
-	 * @return IExtension, l'extension derrière un proxy
+	 * @return l'extension derrière un proxy
 	 */
 	private static IExtension createExtension(Class<?> cl, Config conf) {
 		
 		Class<?>[] interfaces = cl.getInterfaces();
 		interfaces = Arrays.copyOf(interfaces, interfaces.length+1);
 		interfaces[interfaces.length-1] = IExtensionActions.class;
-		IExtension ext = (IExtension) Proxy.newProxyInstance(cl.getClassLoader(), interfaces, new ExtensionContainer(cl, conf));
+		IExtension ext = (IExtension) Proxy.newProxyInstance(cl.getClassLoader(),
+				interfaces, new ExtensionContainer(cl, conf));
 		
 		return ext;
 	}
 	
+	/**
+	 * Trouve le proxy correspondant à une extension
+	 * 
+	 * @param ex, l'extension
+	 * @return le proxy de l'extension
+	 */
 	private static IExtension proxyOf(IExtension ex) {
 		for (Entry<Class<?>,Map<Class<?>,IExtension>> extensions : Framework.extensions.entrySet()) {
 			for (Entry<Class<?>,IExtension> extension : extensions.getValue().entrySet()) {
@@ -258,7 +400,8 @@ public class Framework {
 				}
 			}
 		}
-		return ex; // Already was a proxy
+		// If already was a proxy
+		return ex;
 	}
 
 }

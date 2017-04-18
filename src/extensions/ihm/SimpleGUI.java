@@ -200,6 +200,7 @@ public class SimpleGUI implements IGUI {
 		JPanel buttonPane = new JPanel(new GridLayout(1, 2));
 		
 		// Listener pour les boutons
+		// TODO: You can do better
 		ActionAdapter buttonListener = new ActionAdapter() {
 			public void actionPerformed(ActionEvent e) {
 				if (e.getActionCommand().equals("connect")) {

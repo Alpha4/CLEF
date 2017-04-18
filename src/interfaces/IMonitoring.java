@@ -8,7 +8,4 @@ import framework.IExtension;
 */
 public interface IMonitoring extends IExtension {
 
-	Map<Class<?>,String> getExtensionsStatus();
-	void loadExtension(Class<?> cl);
-	void killExtension(Class<?> cl);
 }

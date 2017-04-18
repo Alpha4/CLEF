@@ -8,7 +8,7 @@ public class Config {
 	String name;
 	String description;
 	String type;
-	boolean autorun;
+	boolean autorun = false;
 	boolean killable = true;
 	List<String> extensions = new ArrayList<String>();
 	

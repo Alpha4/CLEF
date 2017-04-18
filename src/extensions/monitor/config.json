@@ -1,0 +1,7 @@
+{
+	"name": "Monitor",
+	"type": "IMonitoring",
+	"autorun": true,
+	"killable": true,
+	"description": "Affiche la liste des extensions avec leurs status. Permet de les load et kill"
+}

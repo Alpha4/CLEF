@@ -1,7 +1,5 @@
 package framework;
 
-import java.util.Arrays;
-
 public class Event {
 
 	private String name;

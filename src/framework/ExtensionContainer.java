@@ -3,7 +3,7 @@ package framework;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class ExtensionContainer implements InvocationHandler {
+class ExtensionContainer implements InvocationHandler {
 
 	Config meta;
 	IExtension extension;
@@ -32,26 +32,20 @@ public class ExtensionContainer implements InvocationHandler {
 		return "[Container: "+this.meta+"]";
 	}
 	
-	private void log(String message) {
-		System.out.println(this.extensionClass.getName()+" : "+message);
-	}
-	
-	private void load() {
+	private boolean load() {
 		try {
 			this.status = Status.LOADED;
 			this.extension = (IExtension) extensionClass.newInstance();
 			this.extension.start();
 			Framework.event("extension.loaded", this.extensionClass);
-			this.log("loaded");
+			return true;
 		} catch (Exception e) {
-			this.status = Status.ERROR;
-			Framework.event("extension.error", this.extensionClass);
-			this.log("error ("+e.getClass()+": "+e.getMessage()+")");
-			e.printStackTrace();
+			this.error(e);
 		}
+		return false;
 	}
 	
-	private void kill() {
+	private boolean kill() {
 		if (this.extension != null) {
 			if (this.meta.isKillable()) {
 				Framework.unsubscribeEvent("*", this.extension);
@@ -59,23 +53,27 @@ public class ExtensionContainer implements InvocationHandler {
 				this.extension = null;
 				this.status = Status.KILLED;
 				Framework.event("extension.killed", this.extensionClass);
-				this.log("killed");
-			} else {
-				this.log("This extension can't be killed");
+				return true;
 			}
 		}
+		
+		return false;
+	}
+	
+	private void error(Exception e) {
+		this.status = Status.ERROR;
+		Framework.event("extension.error", this.extensionClass);
+		e.printStackTrace();
 	}
 
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		
 		if (method.getName().equals("load")) {
-			this.load();
-			return null;
+			return this.load();
 		}
 		
 		if (method.getName().equals("kill")) {
-			this.kill();
-			return null;
+			return this.kill();
 		}
 		
 		if (method.getName().equals("getExtension")) {
@@ -90,6 +88,10 @@ public class ExtensionContainer implements InvocationHandler {
 			return this.meta.getDescription();
 		}
 		
+		if (method.getName().equals("isKillable")) {
+			return this.meta.isKillable();
+		}
+		
 		if (method.getName().equals("isProxyOf")) {
 			return this.extension != null && this.extension.getClass().getName().equals(args[0].getClass().getName());
 		}
@@ -102,7 +104,14 @@ public class ExtensionContainer implements InvocationHandler {
 			this.load(); // Try to reload the extension
 		}
 		
-		return method.invoke(this.getExtension(), args);
+		Object ret = null;
+		try {
+			ret = method.invoke(this.getExtension(), args);
+		} catch (Exception e) {
+			this.error(e);
+		}
+		
+		return ret;
 	}
 	
 	public boolean equals(Object o) {

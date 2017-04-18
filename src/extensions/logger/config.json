@@ -1,0 +1,7 @@
+{
+	"name": "Logger",
+	"type": "IMonitoring",
+	"autorun": true,
+	"killable": true,
+	"description": "Affiche dans la console les changements d'état des extensions"
+}

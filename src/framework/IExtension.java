@@ -6,17 +6,25 @@ package framework;
 public interface IExtension {
 	
 	/**
-	 * Démarrage de l'extension (voir documentation: "life cycle des extensions")
+	 * Démarrage de l'extension
+	 * 
+	 * Si l'extension est "autorun", cette méthode sera appellé au lancement
+	 * de l'application
+	 * Sinon, cete méthode sera appellé au chargement de l'extension, c'est
+	 * à dire la première fois qu'elle sera demandée par une autre extension
 	 */
 	default void start() {};
 	
 	/**
-	 * Arrêt de l'extension (voir documentation: "life cycle des extensions")
+	 * Arrêt de l'extension
+	 * 
+	 * Cette méthode est appelé quand l'extension est "kill", manuellement ou non.
 	 */
 	default void stop() {};
 	
 	/**
-	 * Méthode appelée après qu'un événement soit lancé
+	 * Gère les événements reçus
+	 * 
 	 * @param event, Event comprenant le nom et le payload
 	 */
 	default void handleEvent(Event event) {};

@@ -1,5 +1,6 @@
 {
 	"name": "NetworkServer",
 	"type": "INetworkServer",
-	"autorun": false
+	"autorun": false,
+	"killable": true
 }

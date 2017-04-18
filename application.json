@@ -2,10 +2,10 @@
 	"name": "CLEF",
 	"description": "Truc",
 	"extensions": [
-		"extensions.monitoring.Monitoring",
 		"extensions.ihm.SimpleGUI",
 		"extensions.networkClient.NetworkClient",
 		"extensions.networkServer.NetworkServer",
-		"extensions.monitorihm.MonitorGUI"
+		"extensions.monitor.Monitor",
+		"extensions.logger.Logger"
 	]
 }
