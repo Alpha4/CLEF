@@ -138,6 +138,7 @@ public class Framework {
 	 * Récupère la première extension disponible en fonction de l'interface
 	 * donnée en paramètre
 	 *
+	 * @param <T>					la classe de l'interface demandée
 	 * @param extensionInterface	l'interface demandée
 	 * @return 						l'extension
 	 */
@@ -153,6 +154,7 @@ public class Framework {
 	 * Récupère la liste des extensions disponible en fonction de l'interface
 	 * donnée en paramètre
 	 *
+	 * @param <T>					la classe de l'interface demandée
 	 * @param extensionInterface 	l'interface demandée
 	 * @return 						la liste des extensions
 	 */
@@ -180,6 +182,7 @@ public class Framework {
 	 * Récupère l'extension suivant l'interface et la classe de l'extension
 	 * donnée en paramètre
 	 *
+	 * @param <T>					la classe de l'interface demandée
 	 * @param extensionInterface	l'interface demandée
 	 * @param extensionClass		la classe de l'extension choisie
 	 * @return 						l'extension voulue

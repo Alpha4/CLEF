@@ -2,10 +2,10 @@
 	"name": "CLEF",
 	"description": "Un super chat client/serveur avec du TCP, du monitoring et deux super interfaces",
 	"extensions": [
-		"simpleGUI",
+		"logger",
+		"monitor",
 		"tcpClient",
 		"tcpServer",
-		"monitor",
-		"logger"
+		"consoleGUI"
 	]
 }

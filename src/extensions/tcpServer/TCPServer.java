@@ -138,7 +138,8 @@ public class TCPServer implements INetworkServer {
 	 * @param message		le message à envoyer
 	 */
 	private void broadcast(ClientThread activeClient, String message) {
-		for(ClientThread client: clientThreads) {
+		for (int i = 0; i < clientThreads.size(); i++) {
+			ClientThread client = clientThreads.get(i);
 			if (activeClient == null || !client.equals(activeClient)) {
 				client.sendMessage(message);
 			}

@@ -2,5 +2,6 @@
 	"name": "TCPServer",
 	"type": "INetworkServer",
 	"autorun": false,
-	"killable": true
+	"killable": true,
+	"description": "Serveur TCP pour le chat"
 }

@@ -71,12 +71,12 @@ public class SimpleGUI implements IGUI {
 		applicationName = Framework.getConfig().getName();
 		
 		// Récupère les informations courantes
-		client = (INetworkClient) Framework.getExtension(INetworkClient.class);
+		client = Framework.getExtension(INetworkClient.class);
 		pseudo = client.getPseudo();
 		address = client.getAddress();
 		port = client.getPort();
 		
-		server = (INetworkServer) Framework.getExtension(INetworkServer.class);
+		server = Framework.getExtension(INetworkServer.class);
 		isHost = server.isStarted();
 		
 		// Créer la fenêtre
@@ -391,10 +391,10 @@ public class SimpleGUI implements IGUI {
 		if (!message.isEmpty()){
 
 			String chat = chatText.getText();
-			String newChat = chat + "\n" + pseudo + " : " + message;			
+			String newChat = chat + "\n" + pseudo + " : " + message;
 			String newMessage = pseudo + " : " + message;
 			chatText.setText(newChat);
-			chatLine.setText("");			
+			chatLine.setText("");
 			client.send(newMessage);
 		}
 		

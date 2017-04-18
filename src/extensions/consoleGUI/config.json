@@ -1,6 +1,7 @@
 {
 	"name": "ConsoleGUI",
 	"type": "IGUI",
-	"autorun": true
-
+	"autorun": true,
+	"killable": true,
+	"description": "Interface console pour le chat"
 }

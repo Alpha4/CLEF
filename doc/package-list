@@ -1,7 +1,7 @@
-extensions.ihm
-extensions.ihmconsole
+extensions.consoleGUI
 extensions.logger
 extensions.monitor
+extensions.simpleGUI
 extensions.tcpClient
 extensions.tcpServer
 framework
