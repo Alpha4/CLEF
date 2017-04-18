@@ -1,9 +1,10 @@
 package interfaces;
 
 import framework.IExtension;
+
 /**
-*Interface du serveur
-*/
+ *Interface du serveur
+ */
 public interface INetworkServer extends IExtension {
 
 	/**
@@ -23,7 +24,9 @@ public interface INetworkServer extends IExtension {
 	void stopServer();
 	
 	/**
-	 * Permet de savoir si le serveur est démarré ou non
+	 * Permet de savoir si le serveur est lancé
+	 * 
+	 * @return Vrai si le serveur est lancé, faux sinon
 	 */
 	boolean isStarted();
 

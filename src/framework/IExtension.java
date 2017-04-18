@@ -8,8 +8,10 @@ public interface IExtension {
 	/**
 	 * Démarrage de l'extension
 	 * 
+	 * <p>
+	 * 
 	 * Si l'extension est "autorun", cette méthode sera appellé au lancement
-	 * de l'application
+	 * de l'application<br>
 	 * Sinon, cete méthode sera appellé au chargement de l'extension, c'est
 	 * à dire la première fois qu'elle sera demandée par une autre extension
 	 */
@@ -18,6 +20,8 @@ public interface IExtension {
 	/**
 	 * Arrêt de l'extension
 	 * 
+	 * <p>
+	 * 
 	 * Cette méthode est appelé quand l'extension est "kill", manuellement ou non.
 	 */
 	default void stop() {};
@@ -25,7 +29,7 @@ public interface IExtension {
 	/**
 	 * Gère les événements reçus
 	 * 
-	 * @param event, Event comprenant le nom et le payload
+	 * @param event Event comprenant le nom et le payload
 	 */
 	default void handleEvent(Event event) {};
 

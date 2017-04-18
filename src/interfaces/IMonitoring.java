@@ -3,8 +3,8 @@ package interfaces;
 import framework.IExtension;
 
 /**
-*Interface du monitoring
-*/
+ * Interface de monitoring
+ */
 public interface IMonitoring extends IExtension {
 
 }

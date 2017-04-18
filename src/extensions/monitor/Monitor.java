@@ -107,6 +107,8 @@ public class Monitor implements IMonitoring {
 				}
 			}
 		});
+		
+		// TODO: Bouton exit();
 
 
 		//Create a panel that uses BoxLayout.

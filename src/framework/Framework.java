@@ -41,9 +41,7 @@ public class Framework {
 
 	public static Map<Class<?>,Map<Class<?>,IExtension>> extensions;
 	private static List<IExtension> autorunExtensions;
-
 	private static Map<String,List<IExtension>> eventHandlers;
-
 	private static Config config;
 
 
@@ -53,6 +51,11 @@ public class Framework {
 	/*                                      */
 	/****************************************/
 
+	/**
+	 * Fonction principal de l'exécutable
+	 * 
+	 * @param args arguments de l'exécutable
+	 */
 	public static void main(String[] args) {
 
 		Framework.autorunExtensions = new ArrayList<IExtension>();

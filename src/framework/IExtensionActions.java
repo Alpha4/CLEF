@@ -15,11 +15,12 @@ interface IExtensionActions {
 	
 	/**
 	 * Kill l'extension
+	 * 
 	 * @return Vrai si l'extension a bien été killé, faux sinon
 	 */
 	boolean kill();
 	
-	// Assesseurs
+	// 
 	
 	/**
 	 * Récupère l'instance de l'extension
@@ -52,8 +53,8 @@ interface IExtensionActions {
 	/**
 	 * Permet de savoir si c'est le proxy d'une extension
 	 * 
-	 * @param extension, instance d'une extension
-	 * @return Oui si l'instance donnée en paramètre est la même instance que ce proxy.
+	 * @param extension		instance d'une extension
+	 * @return				Vrai si l'instance donnée en paramètre est la même instance que ce proxy, faux sinon
 	 */
 	boolean isProxyOf(IExtension extension);
 }
