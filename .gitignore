@@ -8,6 +8,8 @@
 *.war
 *.ear
 
+!/lib/*.jar
+
 .classpath
 .settings
 
