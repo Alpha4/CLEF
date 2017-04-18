@@ -1,8 +1,7 @@
 package interfaces;
 
-import java.util.Map;
-
 import framework.IExtension;
+
 /**
 *Interface du monitoring
 */
