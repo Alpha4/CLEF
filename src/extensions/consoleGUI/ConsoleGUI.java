@@ -63,6 +63,9 @@ public class ConsoleGUI implements IGUI {
 		if (!client.isConnected()) {
 			println("Welcome to "+applicationName+"!\n");
 			askType();
+		} else {
+			state = CONNECTED;
+			println("\n-- Connected --\n");
 		}
 		
 		// Subscribe to events
