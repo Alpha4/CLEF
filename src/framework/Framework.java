@@ -24,9 +24,9 @@ import com.google.gson.*;
  *
  * Extensions:
  * 		- getExtensions()						Récupère toutes les extensions
- * 		- getExtension(Class<?>)				Récupère une IExtension
+ * 		- getExtension(Class<T>)				Récupère une IExtension
  * 		- get(Class<?>)							Récupère une liste d'IExtension
- * 		- get(Class<?>, Class<?>)				Récupère une IExtension
+ * 		- get(Class<?>, Class<T>)				Récupère une IExtension
  * 		- getExtensionConfig(IExtension)		Renvoie la configuration de l'extension
  * 		- getExtensionStatus(IExtension)		Renvoie le status d'une extension
  * 		- loadExtension(IExtension)				Charge une extension
@@ -141,8 +141,8 @@ public class Framework {
 	 * @param extensionInterface	l'interface demandée
 	 * @return 						l'extension
 	 */
-	public static IExtension getExtension(Class<?> extensionInterface){
-		return Framework.get(extensionInterface).get(0);
+	public static <T extends IExtension> T getExtension(Class<T> extensionInterface){
+		return extensionInterface.cast(Framework.get(extensionInterface).get(0));
 	}
 
 	/**
@@ -156,8 +156,8 @@ public class Framework {
 	 * @param extensionInterface 	l'interface demandée
 	 * @return 						la liste des extensions
 	 */
-	public static List<IExtension> get(Class<?> extensionInterface) {
-		List<IExtension> extensions = new ArrayList<IExtension>();
+	public static <T extends IExtension> List<T> get(Class<T> extensionInterface) {
+		List<T> extensions = new ArrayList<T>();
 
 		if (Framework.extensions.get(extensionInterface) == null)
 			throw new RuntimeException("No \""+extensionInterface.getName()+"\" extensions are"
@@ -166,7 +166,7 @@ public class Framework {
 		for(Entry<Class<?>, IExtension> extension : Framework.extensions
 				.get(extensionInterface)
 				.entrySet()) {
-			extensions.add(extension.getValue());
+			extensions.add(extensionInterface.cast(extension.getValue()));
 		}
 
 		return extensions;
@@ -184,11 +184,11 @@ public class Framework {
 	 * @param extensionClass		la classe de l'extension choisie
 	 * @return 						l'extension voulue
 	 */
-	public static IExtension get(Class<?> extensionInterface, Class<?> extensionClass) {
+	public static <T extends IExtension> T get(Class<T> extensionInterface, Class<?> extensionClass) {
 
 		for(Entry<Class<?>, IExtension> extension : Framework.extensions.get(extensionInterface).entrySet()) {
 			if (extension.getValue().getClass() == extensionClass) {
-				return extension.getValue();
+				return extensionInterface.cast(extension.getValue());
 			}
 		}
 
