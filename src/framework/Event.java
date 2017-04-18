@@ -75,4 +75,9 @@ public class Event {
 		return payload;
 	}
 	
+	@Override
+	public String toString() {
+		return name+" => "+(payload != null ? payload : "");
+	}
+	
 }

@@ -33,7 +33,6 @@ public class TCPServer implements INetworkServer {
 
 				try {
 					serverSocket = new ServerSocket(getPort());
-					System.out.println("Server is listening on "+getPort());
 					isStarted = true;
 					Framework.event("network.server.connected", null);
 					while (!serverSocket.isClosed()) {
@@ -216,7 +215,6 @@ public class TCPServer implements INetworkServer {
 						close();
 						break;
 					}
-					//System.out.println(message);
 					readMessage(message);
 				}
 			} catch (IOException e) {

@@ -16,20 +16,14 @@ public class Logger implements IMonitoring {
 	
 	@Override
 	public void stop() {
-		System.out.println(this.getClass()+" : killed");
+		System.out.println("extension.killed => "+this.getClass());
 		System.out.println("End of logs");
 	}
 
 	@Override
 	public void handleEvent(Event event) {
 		
-		if (event.is("extension")) {
-			String[] cats = event.getName().split("\\.");
-			System.out.println(event.getPayload()+" : "+cats[cats.length-1]);
-		} else if (event.is("message")) {
-			System.out.println("Message: "+(String)event.getPayload());
-		}
-		
+		System.out.println(event);
 	}
 	
 }
