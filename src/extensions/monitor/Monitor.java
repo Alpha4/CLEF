@@ -16,6 +16,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -26,6 +27,10 @@ import framework.Framework;
 import framework.IExtension;
 import interfaces.IMonitoring;
 
+/**
+ * Affiche les status des différentes extensions de l'application<br>
+ * Peut load ou kill une extension
+ */
 public class Monitor implements IMonitoring {
 
 	private JPanel mainPanel;
@@ -35,18 +40,43 @@ public class Monitor implements IMonitoring {
 	private JScrollPane listScrollPane;
 	private JButton loadPluginButton;
 	private JButton killPluginButton;
+	private JButton exitButton;
 	
-	private List<Extension> extensionsList;
+	private List<IExtension> extensionsList;
 	
 	// Public methods
 	
+	@Override
 	public void start() {
 		
+		// Create the window
 		createGUI();
+		
+		// Get the extensions
+		extensionsList = new ArrayList<IExtension>();
+		for(Map<Class<?>,IExtension> extensions : Framework.extensions.values()) {
+			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()) {
+				extensionsList.add(extension.getValue());
+			}
+		}
+		
+		// Subscribe to changes
 		Framework.subscribeEvent("extension", this);
 		
+		// Update the table
+		updateTable();
 	}
 	
+	@Override
+	public void stop() {
+		
+		// Ferme la fenêtre
+		mainFrame.setVisible(false);
+		mainFrame.dispose();
+		mainFrame = null;
+	}
+	
+	@Override
 	public void handleEvent(Event event) {
 		
 		if(event.is("extension")) {
@@ -56,6 +86,9 @@ public class Monitor implements IMonitoring {
 	
 	// Private methods
 	
+	/**
+	 * Créer la JFrame et ses composants
+	 */
 	public void createGUI() {
 		
 		Monitor self = this;
@@ -75,8 +108,6 @@ public class Monitor implements IMonitoring {
         model = new DefaultTableModel();
         table = new JTable(model);
         
-        updateTable();
-        
         listScrollPane = new JScrollPane(table);      
 
 		// Create buttons Load and Kill
@@ -85,7 +116,7 @@ public class Monitor implements IMonitoring {
 		loadPluginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = table.getSelectedRow();
-				IExtension extension = extensionsList.get(index).extension;
+				IExtension extension = extensionsList.get(index);
 				if (!Framework.loadExtension(extension)) {
 					System.out.println("This extension could not be loaded");
 				}
@@ -97,7 +128,7 @@ public class Monitor implements IMonitoring {
 		killPluginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = table.getSelectedRow();
-				IExtension extension = extensionsList.get(index).extension;
+				IExtension extension = extensionsList.get(index);
 				if (Framework.isKillable(extension)) {
 					if (!Framework.killExtension(extension)) {
 						System.out.println("This extension could not be killed");
@@ -108,13 +139,20 @@ public class Monitor implements IMonitoring {
 			}
 		});
 		
-		// TODO: Bouton exit();
-
+		exitButton = new JButton("Exit app");
+		exitButton.setActionCommand("Exit");
+		exitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Framework.exit();
+			}
+		});
 
 		//Create a panel that uses BoxLayout.
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel,
 				BoxLayout.LINE_AXIS));
+		buttonPanel.add(exitButton);
+		buttonPanel.add(Box.createHorizontalStrut(40));
 		buttonPanel.add(loadPluginButton);
 		buttonPanel.add(Box.createHorizontalStrut(5));
 		buttonPanel.add(killPluginButton);
@@ -130,29 +168,24 @@ public class Monitor implements IMonitoring {
 		mainFrame.setVisible(true);
 	}
 	
-	public void refreshStatuses() {
-		extensionsList = new ArrayList<Extension>();
-		
-		for(Map<Class<?>,IExtension> extensions : Framework.extensions.values()) {
-			for(Entry<Class<?>,IExtension> extension : extensions.entrySet()) {
-				extensionsList.add(new Extension(extension.getKey(),extension.getValue(),Framework.getExtensionStatus(extension.getValue())));
-			}
-		}
-	}
-	
-	public void updateTable() {
-		
-		refreshStatuses();
+	/**
+	 * Met à jour l'affichage des status des plugins
+	 */
+	private void updateTable() {
 		
 		Vector<String> colNames = new Vector<String>();
-		colNames.add("Plugin");
+		colNames.add("Type");
+		colNames.add("Name");
 		colNames.add("Status");
 		Vector<Object> data = new Vector<Object>();
 		
-		for (Extension extension : extensionsList) {
+		for (IExtension extension : extensionsList) {
 			Vector<String> row = new Vector<String>();
-			row.add(extension.extensionClass.getName());
-			row.add(extension.status);
+			String type = Framework.getExtensionInterface(extension).getName();
+			String name = Framework.getExtensionClass(extension).getName();
+			row.add(type.substring(type.lastIndexOf('.') + 1));
+			row.add(name.substring(name.lastIndexOf('.') + 1));
+			row.add(Framework.getExtensionStatus(extension));
 			data.add(row);
 		}
 
@@ -160,17 +193,24 @@ public class Monitor implements IMonitoring {
 		model.fireTableDataChanged();
 	}
 	
-	// Action adapter for easy event-listener coding
+	/**
+	 * Adapter pour un nouveau ActionListener facilement
+	 */
 	class ActionAdapter implements ActionListener {
 		public void actionPerformed(ActionEvent e) {}
 	}
 	
+	/**
+	 * Permet une gestion simplifié de la liste des extensions
+	 */
 	class Extension {
+		public Class<?> extensionInterface;
 		public Class<?> extensionClass;
 		public IExtension extension;
 		public String status;
 		
-		public Extension(Class<?> extensionClass, IExtension extension, String status) {
+		public Extension(Class<?> extensionInterface, Class<?> extensionClass, IExtension extension, String status) {
+			this.extensionInterface = extensionInterface;
 			this.extensionClass = extensionClass;
 			this.extension = extension;
 			this.status = status;

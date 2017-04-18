@@ -3,8 +3,8 @@
 	"description": "Truc",
 	"extensions": [
 		"extensions.ihm.SimpleGUI",
-		"extensions.networkClient.NetworkClient",
-		"extensions.networkServer.NetworkServer",
+		"extensions.tcpClient.TCPClient",
+		"extensions.tcpServer.TCPServer",
 		"extensions.monitor.Monitor",
 		"extensions.logger.Logger"
 	]

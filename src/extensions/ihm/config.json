@@ -1,6 +1,7 @@
 {
 	"name": "SimpleGUI",
 	"type": "IGUI",
-	"autorun": true
-
+	"autorun": true,
+	"killable": true,
+	"description": "Interface graphique pour le chat"
 }

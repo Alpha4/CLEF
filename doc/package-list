@@ -2,7 +2,7 @@ extensions.ihm
 extensions.ihmconsole
 extensions.logger
 extensions.monitor
-extensions.networkClient
-extensions.networkServer
+extensions.tcpClient
+extensions.tcpServer
 framework
 interfaces

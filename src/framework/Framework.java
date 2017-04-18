@@ -26,6 +26,8 @@ import com.google.gson.*;
  * 		- getExtension(Class<?>)				Récupère une IExtension
  * 		- get(Class<?>)							Récupère une liste d'IExtension
  * 		- get(Class<?>, Class<?>)				Récupère une IExtension
+ * 		- getExtensionInterface(IExtension)		Renvoie l'interface de l'extension
+ * 		- getExtensionClass(IExtension)			Renvoie la classe de l'extension
  * 		- getExtensionStatus(IExtension)		Renvoie le status d'une extension
  * 		- loadExtension(IExtension)				Charge une extension
  * 		- killExtension(IExtension)				Kill une extension
@@ -180,6 +182,32 @@ public class Framework {
 
 		return null;
 	}
+	
+	/**
+	 * Récupère l'interface d'une extension
+	 * 
+	 * <p>
+	 * 
+	 * @param extension		l'extension dont l'interface est demandée
+	 * @return				l'interface de l'extension
+	 */
+	public static Class<?> getExtensionInterface(IExtension extension) {
+		extension = Framework.proxyOf(extension);
+		return ((IExtensionActions)extension).getInterface();
+	}
+	
+	/**
+	 * Récupère la classe d'une extension
+	 * 
+	 * <p>
+	 * 
+	 * @param extension		l'extension dont la classe est demandée
+	 * @return				la classe de l'extension
+	 */
+	public static Class<?> getExtensionClass(IExtension extension) {
+		extension = Framework.proxyOf(extension);
+		return ((IExtensionActions)extension).getExtensionClass();
+	}
 
 	/**
 	 * Récupère le status d'une extension
@@ -192,6 +220,7 @@ public class Framework {
 	 * @return 				le status
 	 */
 	public static String getExtensionStatus(IExtension extension) {
+		extension = Framework.proxyOf(extension);
 		return ((IExtensionActions)extension).getStatus();
 	}
 
@@ -344,23 +373,23 @@ public class Framework {
 			try {
 
 				// Get plugin interface class
-				Class<?> plugInterface = Class.forName("interfaces."+config.getType());
+				Class<?> extensionInterface = Class.forName("interfaces."+config.getType());
 
 				// Get plugin class
-				Class<?> plugClass = Class.forName(classpath);
+				Class<?> extensionClass = Class.forName(classpath);
 
 				// Create Extension
-				IExtension extension = Framework.createExtension(plugClass, config);
+				IExtension extension = Framework.createExtension(extensionInterface, extensionClass, config);
 
 				if (config.isAutorun()) {
 					autorunExtensions.add(extension);
 				}
 
-				if (extensions.get(plugInterface) == null) {
-					extensions.put(plugInterface, new HashMap<Class<?>,IExtension>());
+				if (extensions.get(extensionInterface) == null) {
+					extensions.put(extensionInterface, new HashMap<Class<?>,IExtension>());
 				}
 
-				extensions.get(plugInterface).put(plugClass, extension);
+				extensions.get(extensionInterface).put(extensionClass, extension);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -429,13 +458,13 @@ public class Framework {
 	 * @param config			la configuration associée
 	 * @return l'extension derrière un proxy
 	 */
-	private static IExtension createExtension(Class<?> extensionClass, Config config) {
+	private static IExtension createExtension(Class<?> extensionInterface, Class<?> extensionClass, Config config) {
 
 		Class<?>[] interfaces = extensionClass.getInterfaces();
 		interfaces = Arrays.copyOf(interfaces, interfaces.length+1);
 		interfaces[interfaces.length-1] = IExtensionActions.class;
 		IExtension ext = (IExtension) Proxy.newProxyInstance(extensionClass.getClassLoader(),
-				interfaces, new ExtensionContainer(extensionClass, config));
+				interfaces, new ExtensionContainer(extensionInterface, extensionClass, config));
 
 		return ext;
 	}

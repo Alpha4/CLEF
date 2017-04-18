@@ -1,0 +1,7 @@
+{
+	"name": "TCPClient",
+	"type": "INetworkClient",
+	"autorun": false,
+	"killable": true,
+	"description": "Client TCP pour le chat"
+}

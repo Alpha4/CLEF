@@ -1,4 +1,4 @@
-package extensions.networkServer;
+package extensions.tcpServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +13,10 @@ import interfaces.INetworkServer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class NetworkServer implements INetworkServer {
+/**
+ * Implémentation TCP d'un serveur de chat
+ */
+public class TCPServer implements INetworkServer {
 	
 	private boolean isStarted = false;
 	private int port;
@@ -21,51 +24,9 @@ public class NetworkServer implements INetworkServer {
 	private ServerSocket serverSocket;
 	private List<ClientThread> clientThreads = new ArrayList<ClientThread>();
 	
-	public void connect(Socket socket) {
-		try {
-			clientThreads.add(new ClientThread(socket));
-		} catch(IOException e) {
-			System.out.println(e.getMessage());
-		}
-	}
+	// Public functions
 	
-	public void disconnect(ClientThread client) {
-		Iterator<ClientThread> itr = clientThreads.iterator();
-		while(itr.hasNext()) {
-			if (itr.next().equals(client))
-				itr.remove();
-			break;
-		}
-	}
-	
-	public void broadcast(ClientThread activeClient, String message) {
-		for(ClientThread client: clientThreads) {
-			if (activeClient == null || !client.equals(activeClient)) {
-				client.sendMessage(message);
-			}
-		}
-	}
-	
-	public void setPort(int port){
-		this.port = port;
-	}
-	
-	public int getPort(){
-		return this.port;
-	}
-	
-	public void stopServer() {
-		try {
-			broadcast(null, "close");
-			if (serverSocket != null)
-				serverSocket.close();
-			Framework.event("network.server.disconnected", null);
-			isStarted = false;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
+	@Override
 	public void startServer() {
 		Thread thread = new Thread() {
 			public void run () {
@@ -99,20 +60,106 @@ public class NetworkServer implements INetworkServer {
 		thread.start();
 	}
 	
+	@Override
+	public void stopServer() {
+		try {
+			broadcast(null, "close");
+			if (serverSocket != null)
+				serverSocket.close();
+			Framework.event("network.server.disconnected", null);
+			isStarted = false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
 	public void stop() {
 		stopServer();
 	}
+
+	@Override
+	public void setPort(int port){
+		this.port = port;
+	}
 	
+	@Override
 	public boolean isStarted() {
 		return isStarted;
 	}
 	
+	// Private functions
+	
+	/**
+	 * Récupère le port du serveur
+	 * 
+	 * @return port du serveur
+	 */
+	private int getPort(){
+		return this.port;
+	}
+	
+	/**
+	 * Créer un nouveau thread client
+	 * 
+	 * @param socket socket du client
+	 */
+	private void connect(Socket socket) {
+		try {
+			clientThreads.add(new ClientThread(socket));
+		} catch(IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Déconnecte un client
+	 * 
+	 * @param client le client à déconnecter
+	 */
+	private void disconnect(ClientThread client) {
+		Iterator<ClientThread> itr = clientThreads.iterator();
+		while(itr.hasNext()) {
+			if (itr.next().equals(client))
+				itr.remove();
+			break;
+		}
+	}
+	
+	/**
+	 * Broadcast un message à tous les clients
+	 * 
+	 * <p>
+	 * 
+	 * Pour éviter les doublons, il est possible de donner en paramètre
+	 * le client qui vient d'envoyer le message
+	 * 
+	 * @param activeClient 	client qui ne doit pas recevoir le message
+	 * @param message		le message à envoyer
+	 */
+	private void broadcast(ClientThread activeClient, String message) {
+		for(ClientThread client: clientThreads) {
+			if (activeClient == null || !client.equals(activeClient)) {
+				client.sendMessage(message);
+			}
+		}
+	}
+	
+	/**
+	 * Thread d'un client
+	 */
 	private class ClientThread extends Thread {
 		
 		private Socket clientSocket;
 		private BufferedReader input;
 		private PrintWriter output;
 
+		/**
+		 * Constructeur par défaut
+		 * 
+		 * @param socket		Socket du client
+		 * @throws IOException
+		 */
 		public ClientThread(Socket socket) throws IOException {
 			this.clientSocket = socket;
 			input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -120,14 +167,27 @@ public class NetworkServer implements INetworkServer {
 			start();
 		}
 		
+		/**
+		 * Action effectuée quand un message est reçu
+		 * 
+		 * @param message le message reçu
+		 */
 		public void readMessage(String message) {
 			broadcast(this, message);
 		}
 
+		/**
+		 * Permet d'envoyer un message au client
+		 * 
+		 * @param message le message à envoyer
+		 */
 		public void sendMessage(String message) {
 			output.println(message);
 		}
 		
+		/**
+		 * Déconnecte le client
+		 */
 		public void close() {
 			try {
 				if (input != null) {

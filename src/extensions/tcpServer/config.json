@@ -1,5 +1,5 @@
 {
-	"name": "NetworkServer",
+	"name": "TCPServer",
 	"type": "INetworkServer",
 	"autorun": false,
 	"killable": true

@@ -8,7 +8,7 @@ import framework.IExtension;
 public interface INetworkServer extends IExtension {
 
 	/**
-	 * définir le port du serveur
+	 * Défini le port du serveur
 	 * @param port le port du serveur
 	 */
 	void setPort(int port);

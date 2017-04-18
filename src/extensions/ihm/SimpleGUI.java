@@ -28,6 +28,9 @@ import interfaces.IGUI;
 import interfaces.INetworkClient;
 import interfaces.INetworkServer;
 
+/**
+ * Interface graphique pour le chat
+ */
 public class SimpleGUI implements IGUI {
 	
 	private String applicationName;
@@ -61,6 +64,7 @@ public class SimpleGUI implements IGUI {
 	
 	// Public methods
 
+	@Override
 	public void start() {
 		
 		// Récupère le nom de l'application pour le titre de la fenêtre
@@ -89,6 +93,7 @@ public class SimpleGUI implements IGUI {
 		Framework.subscribeEvent("message.received", this);
 	}
 	
+	@Override
 	public void stop() {
 		
 		// Ferme la fenêtre
@@ -97,6 +102,7 @@ public class SimpleGUI implements IGUI {
 		mainFrame = null;
 	}
 	
+	@Override
 	public void handleEvent(Event event) {
 		
 		if (event.is("network.client.connected")) {
@@ -129,6 +135,11 @@ public class SimpleGUI implements IGUI {
 	
 	// Private methods
 	
+	/**
+	 * Créer la JFrame et le panneau principal
+	 * 
+	 * Appel {@link #initOptionsPanel()}, {@link #initChatPanel()}, {@link #initStatusBar()}
+	 */
 	private void initWindow() {
 		
 		mainFrame = new JFrame(applicationName);
@@ -151,6 +162,11 @@ public class SimpleGUI implements IGUI {
 		mainFrame.setVisible(true);
 	}
 	
+	/**
+	 * Créer le JPanel d'options et ses composants
+	 * 
+	 * @return le JPanel d'options
+	 */
 	private JPanel initOptionsPanel() {
 		
 		JPanel panel = null;
@@ -200,7 +216,6 @@ public class SimpleGUI implements IGUI {
 		JPanel buttonPane = new JPanel(new GridLayout(1, 2));
 		
 		// Listener pour les boutons
-		// TODO: You can do better
 		ActionAdapter buttonListener = new ActionAdapter() {
 			public void actionPerformed(ActionEvent e) {
 				if (e.getActionCommand().equals("connect")) {
@@ -243,6 +258,11 @@ public class SimpleGUI implements IGUI {
 		return optionsPanel;
 	}
 	
+	/**
+	 * Créer le JPanel de chat et ses composants
+	 * 
+	 * @return le JPanel de chat
+	 */
 	private JPanel initChatPanel() {
 		
 		chatPanel = new JPanel(new BorderLayout());
@@ -272,6 +292,11 @@ public class SimpleGUI implements IGUI {
 		return chatPanel;
 	}
 	
+	/**
+	 * Créer le JLabel de status
+	 * 
+	 * @return le JLabel de status
+	 */
 	private JLabel initStatusBar() {
 		statusBar = new JLabel();
 		statusBar.setText("Offline");
@@ -279,6 +304,9 @@ public class SimpleGUI implements IGUI {
 		return statusBar;
 	}
 	
+	/**
+	 * Action à l'appuie du bouton "Connect"
+	 */
 	private void connect() {
 		
 		port = Integer.parseInt(portField.getText());
@@ -298,6 +326,9 @@ public class SimpleGUI implements IGUI {
 		client.connect();
 	}
 	
+	/**
+	 * Change l'interface pour afficher l'état connecté
+	 */
 	private void connected() {
 		// Activation du chat / désactivation des options
 		chatLine.setEnabled(true);
@@ -315,6 +346,9 @@ public class SimpleGUI implements IGUI {
 		mainFrame.repaint();
 	}
 	
+	/**
+	 * Action à l'appuie du bouton "Disconnect"
+	 */
 	private void disconnect() {
 	
 		if (hostOption.isSelected() == true && server.isStarted()) {
@@ -324,6 +358,9 @@ public class SimpleGUI implements IGUI {
 		}
 	}
 	
+	/**
+	 * Change l'interface pour afficher l'état déconnecté
+	 */
 	private void disconnected() {
 		
 		// Désactivation du chat / activation des options
@@ -344,6 +381,9 @@ public class SimpleGUI implements IGUI {
 		mainFrame.repaint();
 	}
 	
+	/**
+	 * Action à l'appuie du bouton "Send"
+	 */
 	private void sendMessage() {
 		
 		String message = chatLine.getText();
@@ -361,6 +401,11 @@ public class SimpleGUI implements IGUI {
 		mainFrame.repaint();
 	}
 	
+	/**
+	 * Affiche le message reçu dans le chat
+	 * 
+	 * @param message le message reçu
+	 */
 	private void receiveMessage(String message) {
 		
 		String chat = chatText.getText();
@@ -371,20 +416,24 @@ public class SimpleGUI implements IGUI {
 		mainFrame.repaint();
 	}
 	
-}
+	/**
+	 * Adapter pour un nouveau ActionListener facilement
+	 */
+	class ActionAdapter implements ActionListener {
+		public void actionPerformed(ActionEvent e) {}
+	}
 
-// Action adapter for easy event-listener coding
-class ActionAdapter implements ActionListener {
-	public void actionPerformed(ActionEvent e) {}
-}
+	/**
+	 * Adapter pour un nouveau KeyboardListener facilement
+	 */
+	class KeyboardListener implements KeyListener {
 
-//Keyboard listener for easy key-listener coding
-class KeyboardListener implements KeyListener {
+		public void keyPressed(KeyEvent e) {}
 
-	public void keyPressed(KeyEvent e) {}
+		public void keyReleased(KeyEvent e) {}
 
-	public void keyReleased(KeyEvent e) {}
+		public void keyTyped(KeyEvent e) {}
 
-	public void keyTyped(KeyEvent e) {}
-
+	}
+	
 }

@@ -9,15 +9,16 @@ import java.lang.reflect.Method;
  * <p>
  * 
  * Evénements créés:<br>
- * 		- extension.loaded - Class<?>		Event au chargement d'une extension<br>
- * 		- extension.killed - Class<?>		Event au kill d'une extension<br>
- * 		- extension.error  - Class<?>		Event à l'erreur d'une extension<br>
+ * 		- extension.loaded - Class		Event au chargement d'une extension<br>
+ * 		- extension.killed - Class		Event au kill d'une extension<br>
+ * 		- extension.error  - Class		Event à l'erreur d'une extension<br>
  */
 class ExtensionContainer implements InvocationHandler {
 
 	Config meta;
 	IExtension extension;
 	String status;
+	Class<?> extensionInterface;
 	Class<?> extensionClass;
 	
 	/**
@@ -26,8 +27,9 @@ class ExtensionContainer implements InvocationHandler {
 	 * @param extensionClass	Classe de l'extension
 	 * @param meta				Configuration de l'extension
 	 */
-	public ExtensionContainer(Class<?> extensionClass, Config meta) {
+	public ExtensionContainer(Class<?> extensionInterface, Class<?> extensionClass, Config meta) {
 		super();
+		this.extensionInterface = extensionInterface;
 		this.extensionClass = extensionClass;
 		this.meta = meta;
 		this.status = Status.NOT_LOADED;
@@ -66,6 +68,14 @@ class ExtensionContainer implements InvocationHandler {
 		
 		if (method.getName().equals("getStatus")) {
 			return this.status;
+		}
+		
+		if (method.getName().equals("getInterface")) {
+			return this.extensionInterface;
+		}
+		
+		if (method.getName().equals("getExtensionClass")) {
+			return this.extensionClass;
 		}
 		
 		if (method.getName().equals("getDescription")) {

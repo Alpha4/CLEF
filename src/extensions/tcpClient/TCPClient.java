@@ -1,4 +1,4 @@
-package extensions.networkClient;
+package extensions.tcpClient;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,7 +10,10 @@ import java.util.Scanner;
 import framework.Framework;
 import interfaces.INetworkClient;
 
-public class NetworkClient implements INetworkClient {
+/**
+ * Implémentation TCP d'un client de chat
+ */
+public class TCPClient implements INetworkClient {
 	
 	private boolean isConnected;
 	private String pseudo;
@@ -22,15 +25,15 @@ public class NetworkClient implements INetworkClient {
 	private PrintWriter output;
 	
 	private Thread thread;
-	
-	// Public methods
 
+	@Override
 	public void start() {
 		pseudo = "Pseudo";
 		address = "localhost";
 		port = 1337;
 	}
 	
+	@Override
 	public void connect() {
 		try {
 			socket = new Socket(address,getPort());
@@ -67,10 +70,12 @@ public class NetworkClient implements INetworkClient {
 		
 	}
 	
+	@Override
 	public void send(String message) {
 		output.println(message);
 	}
 	
+	@Override
 	public void disconnect() {
 		try {
 			if (socket != null) {
@@ -90,34 +95,42 @@ public class NetworkClient implements INetworkClient {
 		}
 	}
 	
+	@Override
 	public void stop() {
 		disconnect();
 	}
 	
+	@Override
 	public String getPseudo() {
 		return pseudo;
 	}
 
+	@Override
 	public void setPseudo(String pseudo) {
 		this.pseudo = pseudo;
 	}
 	
+	@Override
 	public String getAddress() {
 		return address;
 	}
 	
+	@Override
 	public void setAddress(String address) {
 		this.address = address;
 	}
 	
+	@Override
 	public int getPort(){
 		return port;
 	}
 	
+	@Override
 	public void setPort(int port){
 		this.port = port;
 	}
 	
+	@Override
 	public boolean isConnected() {
 		return isConnected;
 	}
