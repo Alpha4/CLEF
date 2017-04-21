@@ -26,7 +26,6 @@ import com.google.gson.*;
  * 		- getExtensions()						Récupère toutes les extensions
  * 		- getExtension(Class<T>)				Récupère une IExtension
  * 		- get(Class<?>)							Récupère une liste d'IExtension
- * 		- get(Class<?>, Class<T>)				Récupère une IExtension
  * 		- getExtensionConfig(IExtension)		Renvoie la configuration de l'extension
  * 		- getExtensionStatus(IExtension)		Renvoie le status d'une extension
  * 		- loadExtension(IExtension)				Charge une extension
@@ -142,7 +141,7 @@ public class Framework {
 	 * @param extensionInterface	l'interface demandée
 	 * @return 						l'extension
 	 */
-	public static <T extends IExtension> T getExtension(Class<T> extensionInterface){
+	public static <T extends IExtension> T getExtension(Class<T> extensionInterface) {
 		return extensionInterface.cast(Framework.get(extensionInterface).get(0));
 	}
 
@@ -173,35 +172,9 @@ public class Framework {
 
 		return extensions;
 	}
-
-	/**
-	 * Récupère une extension
-	 *
-	 * <p>
-	 *
-	 * Récupère l'extension suivant l'interface et la classe de l'extension
-	 * donnée en paramètre
-	 *
-	 * @param <T>					la classe de l'interface demandée
-	 * @param extensionInterface	l'interface demandée
-	 * @param extensionClass		la classe de l'extension choisie
-	 * @return 						l'extension voulue
-	 */
-	public static <T extends IExtension> T get(Class<T> extensionInterface, Class<?> extensionClass) {
-
-		for(Entry<Class<?>, IExtension> extension : Framework.extensions.get(extensionInterface).entrySet()) {
-			if (extension.getValue().getClass() == extensionClass) {
-				return extensionInterface.cast(extension.getValue());
-			}
-		}
-
-		return null;
-	}
 	
 	/**
 	 * Récupère la configuration d'une extension
-	 * 
-	 * <p>
 	 * 
 	 * @param extension		l'extension dont la configuration est demandée
 	 * @return				la configuration de l'extension
@@ -305,7 +278,7 @@ public class Framework {
 	}
 
 	/**
-	 * Souscris à un type d'événement
+	 * Souscrit à un type d'événement
 	 *
 	 * <p>
 	 *
@@ -331,7 +304,7 @@ public class Framework {
 	}
 
 	/**
-	 * Désouscris à un type d'événement
+	 * Désouscrit à un type d'événement
 	 *
 	 * <p>
 	 *

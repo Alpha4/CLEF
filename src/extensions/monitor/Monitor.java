@@ -30,6 +30,11 @@ import interfaces.IMonitoring;
 /**
  * Affiche les status des différentes extensions de l'application<br>
  * Peut load ou kill une extension
+ * 
+ * <p>
+ * 
+ * Evénements souscris:<br>
+ * 		- extension.* - Class		Event déclenché par un changement d'état d'une extension<br>
  */
 public class Monitor implements IMonitoring {
 

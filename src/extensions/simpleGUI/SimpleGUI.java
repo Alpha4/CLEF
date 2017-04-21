@@ -30,6 +30,16 @@ import interfaces.INetworkServer;
 
 /**
  * Interface graphique pour le chat
+ * 
+ * <p>
+ * 
+ * Evénements souscris:<br>
+ * 		- network.client.connected - null		Event à la connexion du client<br>
+ * 		- network.client.disconnected - null	Event à la connexion du client<br>
+ * 		- network.client.failed - String		Event si le client a rencontré une erreur<br>
+ * 		- network.server.failed - String		Event si le serveur a rencontré une erreur<br>
+ * 		- message.sent - String					Event à l'envoi d'un message<br>
+ * 		- message.received - String				Event à la réception d'un message<br>
  */
 public class SimpleGUI implements IGUI {
 	

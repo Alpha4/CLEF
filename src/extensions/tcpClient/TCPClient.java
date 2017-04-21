@@ -12,6 +12,15 @@ import interfaces.INetworkClient;
 
 /**
  * Implémentation TCP d'un client de chat
+ * 
+ * <p>
+ * 
+ * Evénements créés:<br>
+ * 		- message.sent - String					Event à l'envoi d'un message<br>
+ * 		- message.received - String				Event à la réception d'un message<br>
+ * 		- network.client.connected - null		Event à la connexion au serveur<br>
+ * 		- network.client.disconnected - null	Event à la déconnexion au serveur<br>
+ * 		- network.client.failed - String		Event si une erreur a été rencontrée<br>
  */
 public class TCPClient implements INetworkClient {
 	

@@ -6,6 +6,11 @@ import interfaces.IMonitoring;
 
 /**
  * Affiche les logs dans la console
+ * 
+ * <p>
+ * 
+ * Evénements souscris:<br>
+ * 		- *		Tous les événements<br>
  */
 public class Logger implements IMonitoring {
 	

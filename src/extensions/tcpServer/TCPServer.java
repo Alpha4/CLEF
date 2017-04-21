@@ -15,6 +15,13 @@ import java.util.Iterator;
 
 /**
  * Implémentation TCP d'un serveur de chat
+ * 
+ * <p>
+ * 
+ * Evénements créés:<br>
+ * 		- network.server.connected - null		Event au démarrage du serveur<br>
+ * 		- network.server.disconnected - null	Event à l'arrêt du serveur<br>
+ * 		- network.server.failed - String		Event si une erreur a été rencontrée<br>
  */
 public class TCPServer implements INetworkServer {
 	
